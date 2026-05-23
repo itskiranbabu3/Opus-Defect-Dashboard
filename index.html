@@ -258,19 +258,19 @@ canvas{max-height:280px;}
         <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="onFileChange(event)"/>
       </div>
       <div class="panel" style="margin-bottom:16px">
-        <div class="panel-title">&#9313; Auto-Refresh via Direct Download URL</div>
-        <div class="info-box info-amber" style="margin-bottom:14px">
-          If you have a <strong>direct download link</strong> for the Excel file, paste it here. The dashboard will auto-refresh every 5 minutes.<br/><br/>
-          <strong>How to get the link from SharePoint:</strong><br/>
-          Open SharePoint &rarr; right-click the Excel file &rarr; <em>Copy link</em> &rarr; paste below.<br/>
-          <em>Note: Works only if you are already signed into SharePoint in the same browser session.</em>
+        <div class="panel-title">&#9313; Live Auto-Sync from OneDrive (Recommended for dynamic updates)</div>
+        <div class="info-box info-green" style="margin-bottom:14px">
+          <strong>How this works:</strong><br/>
+          Your SharePoint Excel is already synced to your PC via OneDrive. Pick the synced file once &mdash; the dashboard will <strong>auto-refresh every 60 seconds</strong>. Whenever anyone updates the Excel in SharePoint, OneDrive syncs it, and the dashboard updates automatically.<br/><br/>
+          <strong>Your synced file is likely at:</strong><br/>
+          <code style="background:rgba(0,0,0,.06);padding:2px 6px;border-radius:4px;font-size:11px">C:\Users\...\OneDrive - Allianz\Endorsement_Defect_Dashboard.xlsx</code>
         </div>
-        <input class="url-input" id="urlInput" type="text" placeholder="https://allianzms-my.sharepoint.com/.../download.aspx?UniqueId=..."/>
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="btn btn-primary" onclick="connectURL()">&#128279; Connect &amp; Load</button>
-          <button class="btn btn-outline" onclick="clearURL()">&#10005; Clear</button>
+        <button class="btn btn-primary" onclick="pickLocalFile()" id="btnPickFile">&#128196; Pick Synced Excel File (OneDrive)</button>
+        <div id="liveStatus" style="margin-top:10px;font-size:12px;color:var(--muted)"></div>
+        <div id="liveFileInfo" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);font-size:12px;">
+          <span id="liveFileName"></span>
+          &nbsp;&nbsp;<button class="btn btn-outline btn-sm" onclick="stopLiveSync()" style="padding:3px 10px">&#9632; Stop sync</button>
         </div>
-        <div id="urlStatus" style="margin-top:10px;font-size:12px;color:var(--muted)"></div>
       </div>
       <div class="panel">
         <div class="panel-title">&#9314; Load Demo Data</div>
@@ -466,35 +466,64 @@ function readFile(file){
   reader.readAsArrayBuffer(file);
 }
 
-function connectURL(){
-  var url=document.getElementById('urlInput').value.trim();
-  if(!url){toast('Paste a URL first',3000);return;}
-  autoURL=url;try{localStorage.setItem('defectDashURL',url);}catch(e){}
-  fetchFromURL(url,true);
+// ── LIVE SYNC via File System Access API ─────────────────────────────────────
+var liveFileHandle=null,liveTimer=null,liveLastMod=0;
+
+async function pickLocalFile(){
+  if(!window.showOpenFilePicker){
+    document.getElementById('liveStatus').innerHTML='Your browser does not support file system access. Use <strong>Option 1 (Upload)</strong> above, or use Edge/Chrome.';
+    return;
+  }
+  try{
+    var handles=await window.showOpenFilePicker({types:[{description:'Excel Files',accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx','.xls']}}],multiple:false});
+    liveFileHandle=handles[0];
+    document.getElementById('liveFileInfo').style.display='block';
+    document.getElementById('liveFileName').textContent='Live: '+liveFileHandle.name+' — auto-refreshing every 60s';
+    document.getElementById('syncPill').classList.add('show');
+    document.getElementById('syncLabel').textContent='Live sync ON';
+    document.getElementById('refreshBtn').style.display='';
+    document.getElementById('refreshBtn2').style.display='';
+    await readLiveFile();
+    if(liveTimer)clearInterval(liveTimer);
+    liveTimer=setInterval(readLiveFile,60000);
+    nav('dashboard');
+    toast('Live sync started — auto-refreshing every 60s',4000);
+  }catch(e){
+    if(e.name!=='AbortError') document.getElementById('liveStatus').textContent='Error: '+e.message;
+  }
 }
-function clearURL(){
-  autoURL='';try{localStorage.removeItem('defectDashURL');}catch(e){}
-  if(autoTimer){clearInterval(autoTimer);autoTimer=null;}
-  document.getElementById('urlInput').value='';document.getElementById('urlStatus').textContent='';
+
+async function readLiveFile(){
+  if(!liveFileHandle)return;
+  try{
+    var file=await liveFileHandle.getFile();
+    if(file.lastModified===liveLastMod&&liveLastMod!==0)return; // no change
+    liveLastMod=file.lastModified;
+    var buf=await file.arrayBuffer();
+    var data=parseBuffer(buf);
+    if(!data.length)return;
+    loadData(data);
+    document.getElementById('liveFileName').textContent='Live: '+liveFileHandle.name+' — updated '+new Date(file.lastModified).toLocaleTimeString();
+  }catch(e){
+    document.getElementById('liveFileName').textContent='Sync error: '+e.message+' — re-pick the file';
+    stopLiveSync();
+  }
+}
+
+function stopLiveSync(){
+  if(liveTimer){clearInterval(liveTimer);liveTimer=null;}
+  liveFileHandle=null;liveLastMod=0;
+  document.getElementById('liveFileInfo').style.display='none';
+  document.getElementById('liveStatus').textContent='';
   document.getElementById('syncPill').classList.remove('show');
-  document.getElementById('refreshBtn').style.display='none';document.getElementById('refreshBtn2').style.display='none';
+  document.getElementById('refreshBtn').style.display='none';
+  document.getElementById('refreshBtn2').style.display='none';
 }
-function fetchFromURL(url,start){
-  document.getElementById('urlStatus').textContent='Fetching...';
-  fetch(url,{cache:'no-store',credentials:'include'})
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer();})
-    .then(function(buf){
-      var data=parseBuffer(buf);
-      if(!data.length)throw new Error('No rows found');
-      loadData(data);
-      document.getElementById('urlStatus').textContent='Connected - auto-refreshing every 5 min';
-      document.getElementById('syncPill').classList.add('show');
-      document.getElementById('refreshBtn').style.display='';document.getElementById('refreshBtn2').style.display='';
-      if(start){if(autoTimer)clearInterval(autoTimer);autoTimer=setInterval(function(){fetchFromURL(url,false);},5*60*1000);nav('dashboard');}
-    })
-    .catch(function(err){document.getElementById('urlStatus').innerHTML='Failed: '+err.message+'. <strong>Use Option 1 (Upload) instead</strong> - download the Excel from SharePoint and upload here.';});
+
+function doRefresh(){
+  if(liveFileHandle)readLiveFile();
+  else{nav('datasource');toast('Pick a file or upload first',2500);}
 }
-function doRefresh(){if(autoURL)fetchFromURL(autoURL,false);else{nav('datasource');toast('Select a data source first',2500);}}
 
 function loadDemoData(){
   var D=[{id:1,product:'040100',endtCode:'END-001',screenName:'Policy Header',description:'Product code not saving on endorsement add',comments:'Validation missing',priority:'P1',status:'Open',tester:'Alice',devAssignee:'Bob',eta:'2024-06-10'},{id:2,product:'040100',endtCode:'END-002',screenName:'Coverage Screen',description:'Premium field not populating on endorsement add',comments:'BE dependency - API not returning data',priority:'P1',status:'Open',tester:'Alice',devAssignee:'Charlie',eta:'2024-06-12'},{id:3,product:'040100',endtCode:'END-003',screenName:'Risk Details',description:'Risk address not pre-filling from policy',comments:'Frontend issue - missing mapping',priority:'P2',status:'In Progress',tester:'Bob',devAssignee:'Dave',eta:'2024-06-15'},{id:4,product:'040100',endtCode:'END-004',screenName:'Endorsement Summary',description:'Effective date allows past dates without warning',comments:'Validation rule missing',priority:'P2',status:'Fixed',tester:'Alice',devAssignee:'Bob',eta:'2024-06-08'},{id:5,product:'040100',endtCode:'END-005',screenName:'Payment Screen',description:'Payment confirmation not sent after endorsement',comments:'Email service timeout',priority:'P1',status:'Open',tester:'Charlie',devAssignee:'Eve',eta:'2024-06-11'},{id:6,product:'040300',endtCode:'END-006',screenName:'Policy Header',description:'Insured name truncated to 30 chars on UI',comments:'UI field length constraint',priority:'P3',status:'Fixed',tester:'Bob',devAssignee:'Frank',eta:'2024-06-09'},{id:7,product:'040300',endtCode:'END-007',screenName:'Coverage Screen',description:'Limit of liability shows wrong default value',comments:'Config issue in backend',priority:'P2',status:'RFT',tester:'Alice',devAssignee:'Charlie',eta:'2024-06-14'},{id:8,product:'040300',endtCode:'END-008',screenName:'Risk Details',description:'Building value field accepts negative numbers',comments:'Missing min value validation',priority:'P3',status:'Fixed',tester:'Charlie',devAssignee:'Dave',eta:'2024-06-07'},{id:9,product:'040300',endtCode:'END-009',screenName:'Documents',description:'Policy schedule PDF missing endorsement reason',comments:'Template not updated',priority:'P2',status:'Open',tester:'Bob',devAssignee:'Eve',eta:'2024-06-16'},{id:10,product:'040300',endtCode:'END-010',screenName:'Endorsement Summary',description:'Cancellation endorsement shows wrong premium diff',comments:'Calculation logic error in BE',priority:'P1',status:'In Progress',tester:'Alice',devAssignee:'Frank',eta:'2024-06-13'},{id:11,product:'040700',endtCode:'END-011',screenName:'Policy Header',description:'Policy version not incrementing on endorsement save',comments:'DB trigger issue',priority:'P2',status:'Open',tester:'Dave',devAssignee:'Bob',eta:'2024-06-17'},{id:12,product:'040700',endtCode:'END-012',screenName:'Coverage Screen',description:'Cover type dropdown missing Fire option for 040700',comments:'Master data issue',priority:'P1',status:'Fixed',tester:'Alice',devAssignee:'Charlie',eta:'2024-06-06'},{id:13,product:'040700',endtCode:'END-013',screenName:'Risk Details',description:'Construction type field not mandatory as per business rule',comments:'Validation rule update needed',priority:'P3',status:'Not Fixed',tester:'Bob',devAssignee:'Dave',eta:'2024-06-18'},{id:14,product:'040700',endtCode:'END-014',screenName:'Payment Screen',description:'Installment schedule recalculates on page refresh',comments:'State management bug in FE',priority:'P2',status:'In Progress',tester:'Charlie',devAssignee:'Eve',eta:'2024-06-15'},{id:15,product:'040700',endtCode:'END-015',screenName:'Endorsement Summary',description:'Endorsement history not showing previous changes',comments:'Audit log query incorrect',priority:'P3',status:'RFT',tester:'Dave',devAssignee:'Frank',eta:'2024-06-10'},{id:16,product:'040100',endtCode:'END-016',screenName:'Documents',description:'Wrong document template selected for mid-term endorsement',comments:'Template mapping table incorrect',priority:'P2',status:'Fixed',tester:'Alice',devAssignee:'Bob',eta:'2024-06-05'},{id:17,product:'040300',endtCode:'END-017',screenName:'Coverage Screen',description:'Sum insured field loses value on navigation back',comments:'Session not persisting',priority:'P2',status:'Open',tester:'Bob',devAssignee:'Charlie',eta:'2024-06-19'},{id:18,product:'040700',endtCode:'END-018',screenName:'Policy Header',description:'Endorsement reason code not mapped to policy system',comments:'Integration gap with core system',priority:'P1',status:'Open',tester:'Charlie',devAssignee:'Dave',eta:'2024-06-20'},{id:19,product:'040100',endtCode:'END-019',screenName:'Risk Details',description:'Fire alarm discount not applying on add endorsement',comments:'Discount logic skipping endorsement type',priority:'P3',status:'Fixed',tester:'Dave',devAssignee:'Eve',eta:'2024-06-04'},{id:20,product:'040300',endtCode:'END-020',screenName:'Payment Screen',description:'Refund amount shows as 0 on cancellation endorsement',comments:'Proration formula bug',priority:'P1',status:'Open',tester:'Alice',devAssignee:'Frank',eta:'2024-06-21'}];
