@@ -422,6 +422,7 @@ canvas{position:absolute;inset:0;width:100%!important;height:100%!important;}
           <th onclick="sortBy('tester')">Tester</th>
           <th onclick="sortBy('devAssignee')">Assignee</th>
           <th onclick="sortBy('opusRef')">OPUS Ref</th>
+          <th onclick="sortBy('eta')">ETA</th>
           <th class="no-sort">Actions</th>
         </tr></thead>
         <tbody id="tblBody"></tbody>
@@ -519,32 +520,40 @@ canvas{position:absolute;inset:0;width:100%!important;height:100%!important;}
     <div class="panel">
       <div class="panel-hdr"><span class="panel-title">&#9312; Live Sync — OneDrive-synced Excel (Recommended)</span></div>
       <div class="info-box ib-green" style="margin-bottom:12px">
-        <strong>How it works:</strong> Your SharePoint Excel is synced to your PC via OneDrive. Pick the file once &mdash; the dashboard auto-refreshes every 60 seconds. Any team edit in SharePoint reflects here automatically.<br/><br/>
-        <strong>Typical location:</strong> <code style="background:rgba(0,0,0,.07);padding:2px 7px;border-radius:4px;font-size:11px">C:\Users\...\OneDrive - Allianz\Endorsement_Defect_Dashboard.xlsx</code>
+        <strong>How it works:</strong> Pick your OneDrive-synced SharePoint Excel once — dashboard loads immediately and polls every 60 s for changes.<br/>
+        <strong>&#128308; On HTTP (44.68.16.95)</strong>: browser security blocks File System Access API. The button will open a file picker that loads the file once. For <em>automatic</em> live sync, use the <strong>Server Proxy</strong> option below (already configured).<br/><br/>
+        <strong>Typical location:</strong> <code style="background:rgba(0,0,0,.07);padding:2px 7px;border-radius:4px;font-size:11px">C:\Users\VIUXH4D\OneDrive - Allianz\Endorsement_Defect_Dashboard.xlsx</code>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="pickLocalFile()" id="btnPickFile">&#128196; Pick Synced Excel File</button>
+        <button class="btn btn-primary" onclick="pickLocalFile()" id="btnPickFile">&#128196; Pick &amp; Load Excel File</button>
         <span id="liveStatus" style="font-size:12px;color:var(--muted)"></span>
       </div>
       <div id="liveFileInfo" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);font-size:12px">
         <span id="liveFileName"></span>&nbsp;&nbsp;
         <button class="btn btn-danger btn-xs" onclick="stopLiveSync()">&#9632; Stop Sync</button>
-        <button class="btn btn-outline btn-xs" onclick="readLiveFile(true)" style="margin-left:4px">&#128260; Reload Now</button>
+        <button class="btn btn-outline btn-xs" onclick="doRefresh()" style="margin-left:4px">&#128260; Reload Now</button>
       </div>
     </div>
     <div class="panel">
-      <div class="panel-hdr"><span class="panel-title">&#9313; SharePoint Direct URL Sync</span></div>
-      <div class="info-box ib-amber" style="margin-bottom:12px">
-        <strong>Note:</strong> Direct SharePoint URL fetch is blocked by CORS in browsers. The recommended approach is to use the OneDrive-synced file above. If your SharePoint is accessible via network share, use the option below.
+      <div class="panel-hdr"><span class="panel-title">&#9313; SharePoint / Server-Side Proxy Sync &#9989; Works!</span></div>
+      <div class="info-box ib-green" style="margin-bottom:12px">
+        <strong>How this works:</strong> The Tomcat server reads the OneDrive-synced Excel from <em>its own disk</em> and serves it at <code style="background:rgba(0,0,0,.07);padding:1px 6px;border-radius:3px">/api/excel</code> — same origin, no CORS.<br/><br/>
+        &#128073; The path below is the <strong>server-side path</strong> where OneDrive has synced the SharePoint Excel on the machine running Tomcat (<code style="background:rgba(0,0,0,.07);padding:1px 5px;border-radius:3px">44.68.16.95</code>). Edit it to match your actual sync location.
       </div>
-      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <div class="fg" style="flex:1;min-width:280px">
-          <label>SharePoint / Network Excel URL or Path</label>
-          <input id="spUrl" placeholder="\\server\share\file.xlsx  or  https://..." style="height:32px;border:1px solid var(--border);border-radius:var(--radius-xs);padding:5px 10px;font-size:12px;background:var(--surface2);color:var(--text);outline:none"/>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px">
+        <div class="fg" style="flex:1;min-width:320px">
+          <label>Server-side file path (OneDrive sync location on 44.68.16.95)</label>
+          <input id="spProxyPath" value="C:\Users\VIUXH4D\OneDrive - Allianz\Endorsement_Defect_Dashboard.xlsx"
+            style="height:32px;border:1px solid var(--border);border-radius:var(--radius-xs);padding:5px 10px;font-size:12px;background:var(--surface2);color:var(--text);outline:none;font-family:monospace"/>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="loadFromUrl()">&#128279; Connect</button>
+        <button class="btn btn-primary btn-sm" onclick="loadFromProxy(false)">&#128279; Load Now</button>
+        <button class="btn btn-green btn-sm" onclick="startProxySync()" id="btnProxySync">&#128260; Auto-Sync</button>
+        <button class="btn btn-danger btn-sm" onclick="stopProxySync()" id="btnProxyStop" style="display:none">&#9632; Stop</button>
       </div>
-      <div id="spStatus" style="margin-top:8px;font-size:12px;color:var(--muted)"></div>
+      <div id="proxyStatus" style="font-size:12px;color:var(--muted)"></div>
+      <div id="proxySyncInfo" style="display:none;margin-top:8px;padding:8px 12px;border-radius:7px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);font-size:12px">
+        <span id="proxySyncLabel"></span>
+      </div>
     </div>
     <div class="panel">
       <div class="panel-hdr"><span class="panel-title">&#9314; Upload Excel File</span></div>
@@ -686,7 +695,8 @@ var ALIASES={
   sourceSheet:['sourcesheet','source sheet','sheet','tab'],
   productCode:['productcode6','product code','productcode','prod code'],
   productName:['productname','product name','prod name','name'],
-  defectType: ['defecttype','defect type','type','category','issue type']
+  defectType: ['defecttype','defect type','type','category','issue type'],
+  eta:        ['eta','due date','target date','due','deadline','fix by','target']
 };
 
 var PRODUCT_INFO={
@@ -724,58 +734,104 @@ function fuzzyMap(headers){
   return map;
 }
 
+// Infer productCode from a sheet name like "Fire_040100", "House Owner_040300" etc.
+function pcFromSheet(sn){
+  var m=(sn||'').match(/\b(040[0-9]{3})\b/);
+  return m?m[1]:'';
+}
+// True if a sheet is a product data sheet (not evidence/summary/pivot)
+function isDataSheet(sn){
+  return!/^(Summary|Dashboard|Charts|Pivot|Evidence|Evidences)/i.test(sn);
+}
+
 function parseBuffer(buf){
   var wb=XLSX.read(new Uint8Array(buf),{type:'array',cellDates:true,cellNF:false,cellHTML:false});
   var allData=[];
-  var priority=['RawData','Sheet1','Data'];
+  var seenIds=new Set();
+
+  // Strategy: prefer RawData; if found it likely has ALL defects with ProductCode6 filled.
+  // Also parse each product sheet to pick up any defects not in RawData.
+  var hasRawData=wb.SheetNames.indexOf('RawData')!==-1;
   var sheets=[];
-  priority.forEach(function(s){if(wb.SheetNames.indexOf(s)!==-1)sheets.push(s);});
-  if(!sheets.length) sheets=[wb.SheetNames[0]];
+  if(hasRawData) sheets.push('RawData');
+  // Add product sheets (skip evidence, summary, dashboard, charts)
   wb.SheetNames.forEach(function(s){
-    if(sheets.indexOf(s)===-1&&!/^(Summary|Dashboard|Charts|Summary_|Pivot)/i.test(s)) sheets.push(s);
+    if(s==='RawData')return;
+    if(isDataSheet(s)) sheets.push(s);
   });
+
   sheets.forEach(function(sheetName){
-    var ws=wb.Sheets[sheetName]; if(!ws)return;
+    var ws=wb.Sheets[sheetName];if(!ws)return;
     var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
     if(rows.length<2)return;
+    // Find header row (first row with >= 4 non-empty cells)
     var hdrIdx=0;
-    for(var i=0;i<Math.min(6,rows.length);i++){
+    for(var i=0;i<Math.min(8,rows.length);i++){
       if(rows[i].filter(function(c){return(c||'').toString().trim()!=='';}).length>=4){hdrIdx=i;break;}
     }
     var headers=rows[hdrIdx].map(function(c){return(c||'').toString();});
     var map=fuzzyMap(headers);
-    if(map.description==null&&map.defectID==null)return;
+    if(map.description==null&&map.defectID==null)return; // skip non-defect sheets
+
+    // Infer productCode for this sheet from sheet name
+    var sheetPc=pcFromSheet(sheetName);
+
     for(var r=hdrIdx+1;r<rows.length;r++){
       var row=rows[r];
       if(row.every(function(c){return(c||'').toString().trim()=='';}))continue;
-      function g(f){return map[f]!=null?(row[map[f]]||'').toString().trim():'';}
-      var d={
-        _row:r,_sheet:sheetName,
-        defectID:   g('defectID')||('D'+(allData.length+1).toString().padStart(4,'0')),
-        product:    g('product'),
-        endtCode:   g('endtCode'),
-        screenName: g('screenName'),
-        description:g('description'),
-        comments:   g('comments'),
-        priority:   normP(g('priority')),
-        status:     normS(g('status')),
-        tester:     g('tester'),
-        testData:   g('testData'),
-        devAssignee:g('devAssignee'),
-        notes:      g('notes'),
-        opusRef:    g('opusRef'),
-        legacyRef:  g('legacyRef'),
-        sourceSheet:g('sourceSheet')||sheetName,
-        productCode:g('productCode'),
-        productName:g('productName'),
-        defectType: normDT(g('defectType')),
-        _added:false
-      };
-      if(!d.description&&!d.defectID.startsWith('D'))continue;
-      allData.push(d);
+      // Use closure-safe approach — capture row+map per iteration
+      var gVal=function(rowSnap,mapSnap){
+        return function(f){return mapSnap[f]!=null?(rowSnap[mapSnap[f]]||'').toString().trim():'';}
+      }(row,map);
+
+      var rawPc=gVal('productCode');
+      var rawSrc=gVal('sourceSheet')||sheetName;
+      // Resolve productCode: column value > inferred from sourceSheet col > inferred from sheet name
+      var pc=rawPc||pcFromSheet(rawSrc)||sheetPc;
+
+      var rawId=gVal('defectID');
+      var defId=rawId||('D'+(allData.length+1).toString().padStart(4,'0'));
+
+      // Skip duplicates (RawData already has the canonical record)
+      if(rawId&&seenIds.has(rawId))continue;
+      if(rawId)seenIds.add(rawId);
+
+      var desc=gVal('description');
+      if(!desc&&!rawId)continue; // skip rows with neither
+
+      allData.push({
+        _row:r, _sheet:sheetName,
+        defectID:    defId,
+        product:     gVal('product'),
+        endtCode:    gVal('endtCode'),
+        screenName:  gVal('screenName'),
+        description: desc,
+        comments:    gVal('comments'),
+        priority:    normP(gVal('priority')),
+        status:      normS(gVal('status')),
+        tester:      gVal('tester'),
+        testData:    gVal('testData'),
+        devAssignee: gVal('devAssignee'),
+        notes:       gVal('notes'),
+        opusRef:     gVal('opusRef'),
+        legacyRef:   gVal('legacyRef'),
+        sourceSheet: rawSrc,
+        productCode: pc,
+        productName: gVal('productName')||(PRODUCT_INFO[pc]?PRODUCT_INFO[pc].name:''),
+        defectType:  normDT(gVal('defectType')),
+        eta:         gVal('eta'),
+        _added:false,
+        _overdue:    isOverdue(gVal('eta'), normS(gVal('status')))
+      });
     }
   });
   return allData;
+}
+
+function isOverdue(eta, status){
+  if(!eta||status==='Fixed'||status==='Closed')return false;
+  var d=new Date(eta);
+  return !isNaN(d.getTime())&&d<new Date();
 }
 
 function normP(v){var u=(v||'').toUpperCase().trim();if(u==='P1'||u==='1'||u==='CRITICAL'||u==='BLOCKER')return'P1';if(u==='P2'||u==='2'||u==='HIGH')return'P2';if(u==='P3'||u==='3'||u==='MEDIUM')return'P3';if(u==='P4'||u==='4'||u==='LOW')return'P4';return v||'P3';}
@@ -942,7 +998,16 @@ function renderTable(){
     tbody.innerHTML=rows.map(function(d){
       var pc=d.productCode||d.product||'';
       var sel=selectedIds.has(d.defectID);
-      return '<tr class="'+(sel?'selected-row':'')+'" style="'+(d._added?'border-left:3px solid var(--brand)':'')+'">'+
+      var rowStyle='';
+      if(d._added) rowStyle='border-left:3px solid var(--brand);';
+      if(d._overdue) rowStyle+='background:rgba(220,38,38,.06);';
+      var etaCell='';
+      if(d.eta){
+        var etaDate=new Date(d.eta);
+        var etaStr=!isNaN(etaDate)?etaDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):esc(d.eta);
+        etaCell='<span style="font-size:10px;padding:1px 5px;border-radius:4px;'+(d._overdue?'background:#fef2f2;color:#991b1b;font-weight:700':'color:var(--muted)')+'">'+etaStr+(d._overdue?' ⚠':'')+'</span>';
+      }
+      return '<tr class="'+(sel?'selected-row':'')+'" style="'+rowStyle+'">'+
         '<td><input type="checkbox" '+(sel?'checked':'')+' onchange="toggleSelect(\''+esc(d.defectID)+'\',this.checked)"></td>'+
         '<td class="td-id" onclick="openDetail(\''+esc(d.defectID)+'\')" title="Click to view details">'+esc(d.defectID)+'</td>'+
         '<td><span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--brand-light);color:var(--brand)">'+esc(pc)+'</span></td>'+
@@ -956,6 +1021,7 @@ function renderTable(){
         '<td style="font-size:11px">'+esc(d.tester)+'</td>'+
         '<td class="editable-cell td-truncate" onclick="quickAssignEdit(this,\''+esc(d.defectID)+'\')" title="'+esc(d.devAssignee)+'&#10;Click to reassign" style="font-size:11px">'+esc(d.devAssignee||'—')+'</td>'+
         '<td style="font-size:11px"><span style="color:var(--brand);cursor:pointer" onclick="openDetail(\''+esc(d.defectID)+'\')" title="'+esc(d.opusRef)+'">'+esc(d.opusRef?d.opusRef.substring(0,14):'')+'</span></td>'+
+        '<td>'+etaCell+'</td>'+
         '<td style="white-space:nowrap;display:flex;gap:3px;padding:5px 8px">'+
           '<button class="btn btn-ghost btn-xs" onclick="openEdit(\''+esc(d.defectID)+'\')" title="Edit">&#9998;</button>'+
           '<button class="btn btn-ghost btn-xs" onclick="duplicateDefect(\''+esc(d.defectID)+'\')" title="Duplicate">&#128203;</button>'+
@@ -1327,7 +1393,7 @@ function renderAssignPage(){
   // Workload chart
   var ac=groupBy(open,'devAssignee');
   var sorted=topN(ac,12);
-  mkChart('chartWorkload','horizontalBar'||'bar',sorted.map(function(x){return x[0]||'Unassigned';}),
+  mkChart('chartWorkload','bar',sorted.map(function(x){return x[0]||'Unassigned';}),
     [{data:sorted.map(function(x){return x[1];}),backgroundColor:PALETTE,borderRadius:5}],
     {indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'rgba(100,116,139,.1)'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}});
   // Unassigned list
@@ -1513,23 +1579,76 @@ function clearAdded(){addedDefects=[];allDefects=allDefects.filter(function(d){r
 // ══════════════════════════════════════════════════
 // FILE OPS — OneDrive + SharePoint + Upload
 // ══════════════════════════════════════════════════
+// Live sync — works both on localhost (File System Access API) and HTTP (file input fallback)
 async function pickLocalFile(){
-  if(!window.showOpenFilePicker){toast('Browser does not support File System Access. Use Edge or Chrome.','error');return;}
-  try{
-    var handles=await window.showOpenFilePicker({types:[{description:'Excel Files',accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx','.xls']}}],multiple:false});
-    liveFileHandle=handles[0];
-    var fi=document.getElementById('liveFileInfo');if(fi)fi.style.display='block';
-    document.getElementById('liveFileName').innerHTML='&#128994; <strong>'+liveFileHandle.name+'</strong> — polling every '+liveIntervalSec+'s';
-    document.getElementById('syncPill').classList.add('show');
-    document.getElementById('syncLabel').textContent='Live sync ON';
-    document.getElementById('refreshBtn').style.display='';
-    document.getElementById('refreshBtn2').style.display='';
-    await readLiveFile(true);
-    startLiveTimer();
-    nav('dashboard');
-    toast('Live sync active — polling every '+liveIntervalSec+'s','success');
-    logActivity('Live sync started: '+liveFileHandle.name,'success');
-  }catch(e){if(e.name!=='AbortError')toast('Error: '+e.message,'error');}
+  if(window.showOpenFilePicker&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
+    // Modern File System Access API (requires HTTPS or localhost)
+    try{
+      var handles=await window.showOpenFilePicker({types:[{description:'Excel Files',accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx','.xls']}}],multiple:false});
+      liveFileHandle=handles[0];
+      activateLiveSync(liveFileHandle.name,'fsa');
+      await readLiveFile(true);
+      startLiveTimer();
+      nav('dashboard');
+      toast('Live sync active — polling every '+liveIntervalSec+'s','success');
+      logActivity('Live sync (FSA) started: '+liveFileHandle.name,'success');
+    }catch(e){if(e.name!=='AbortError')toast('Error: '+e.message,'error');}
+  } else {
+    // HTTP fallback: use hidden file input. User picks file once; we read it immediately.
+    // For repeated polling, prompt them to use the Server Proxy sync which works on HTTP.
+    var inp=document.getElementById('liveSyncInput');
+    if(!inp){
+      inp=document.createElement('input');
+      inp.type='file'; inp.id='liveSyncInput';
+      inp.accept='.xlsx,.xls'; inp.style.display='none';
+      document.body.appendChild(inp);
+    }
+    inp.onchange=function(){
+      var file=inp.files&&inp.files[0]; if(!file)return;
+      liveFileObject=file;
+      activateLiveSync(file.name,'input');
+      readLiveFileFromInput(true);
+      startLiveTimerInput();
+      nav('dashboard');
+      toast('File loaded. Note: on HTTP, auto-sync re-reads the same snapshot. Use Server Proxy for true live sync.','info');
+      logActivity('Live sync (input) loaded: '+file.name,'success');
+    };
+    inp.click();
+  }
+}
+
+// Shared activation for both FSA and input modes
+function activateLiveSync(name,mode){
+  var fi=document.getElementById('liveFileInfo');if(fi)fi.style.display='block';
+  document.getElementById('liveFileName').innerHTML=
+    '&#128994; <strong>'+esc(name)+'</strong> — '+(mode==='fsa'?'polling every '+liveIntervalSec+'s':'loaded (use Server Proxy for auto-sync)');
+  document.getElementById('syncPill').classList.add('show');
+  document.getElementById('syncLabel').textContent='Live sync ON';
+  var rb=document.getElementById('refreshBtn');if(rb)rb.style.display='';
+  var rb2=document.getElementById('refreshBtn2');if(rb2)rb2.style.display='';
+}
+
+// Read from File object (input fallback — no lastModified polling, just re-reads same blob)
+var liveFileObject=null;
+function readLiveFileFromInput(force){
+  if(!liveFileObject)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=parseBuffer(e.target.result);
+      if(!data.length){toast('No data found in file','warn');return;}
+      loadData(data);
+      var fn=document.getElementById('liveFileName');
+      if(fn)fn.innerHTML='&#128994; <strong>'+esc(liveFileObject.name)+'</strong> — loaded '+new Date().toLocaleTimeString();
+    }catch(ex){toast('Read error: '+ex.message,'error');}
+  };
+  reader.readAsArrayBuffer(liveFileObject);
+}
+function startLiveTimerInput(){
+  if(liveTimer)clearInterval(liveTimer);
+  // On HTTP: just re-read the same File object periodically (catches in-memory edits won't work,
+  // but at least it doesn't crash. Real live sync needs server proxy.)
+  liveTimer=setInterval(function(){readLiveFileFromInput(false);},liveIntervalSec*1000);
 }
 
 function startLiveTimer(){
@@ -1554,41 +1673,88 @@ async function readLiveFile(force){
 
 function stopLiveSync(){
   if(liveTimer){clearInterval(liveTimer);liveTimer=null;}
-  liveFileHandle=null;liveLastMod=0;
+  liveFileHandle=null;liveFileObject=null;liveLastMod=0;
   var fi=document.getElementById('liveFileInfo');if(fi)fi.style.display='none';
   document.getElementById('syncPill').classList.remove('show');
-  document.getElementById('refreshBtn').style.display='none';
-  document.getElementById('refreshBtn2').style.display='none';
+  var rb=document.getElementById('refreshBtn');if(rb)rb.style.display='none';
+  var rb2=document.getElementById('refreshBtn2');if(rb2)rb2.style.display='none';
   toast('Live sync stopped','warn');
   logActivity('Live sync stopped','warn');
 }
 
 function setRefreshInterval(sec){
   liveIntervalSec=sec||60;
-  if(liveFileHandle){startLiveTimer();toast('Refresh interval: '+sec+'s','success');}
+  if(liveFileHandle)startLiveTimer();
+  else if(liveFileObject)startLiveTimerInput();
+  if(liveFileHandle||liveFileObject)toast('Refresh interval: '+sec+'s','success');
   try{localStorage.setItem('dd-interval',sec);}catch(e){}
 }
 
-async function loadFromUrl(){
-  var url=v('spUrl').trim();
-  if(!url){toast('Enter a URL or network path','warn');return;}
-  var st=document.getElementById('spStatus');if(st)st.textContent='Connecting...';
+// ── Server-side proxy sync (reads OneDrive file from Tomcat server disk) ──
+var proxyTimer=null;
+
+async function loadFromProxy(silent){
+  var path=v('spProxyPath').trim();
+  if(!path){toast('Enter the server-side file path','warn');return;}
+  var st=document.getElementById('proxyStatus');
+  if(st&&!silent)st.textContent='Loading from server...';
+  // Build URL: same origin, servlet reads file from server disk
+  var proxyUrl='/defect-dashboard/api/excel?path='+encodeURIComponent(path);
   try{
-    var resp=await fetch(url,{mode:'cors',credentials:'include'});
-    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    var resp=await fetch(proxyUrl,{cache:'no-store'});
+    if(!resp.ok){
+      var errText=await resp.text().catch(function(){return resp.statusText;});
+      throw new Error('HTTP '+resp.status+': '+errText);
+    }
     var buf=await resp.arrayBuffer();
     var data=parseBuffer(buf);
-    if(!data.length){if(st)st.textContent='No data found';toast('No data found in file','warn');return;}
+    if(!data.length){if(st)st.textContent='No data found in file';toast('No data found','warn');return;}
     loadData(data);
-    if(st)st.innerHTML='<span style="color:#16a34a">Connected — '+data.length+' defects loaded</span>';
-    logActivity('Loaded from URL: '+url,'success');
-    nav('dashboard');
+    var now=new Date().toLocaleTimeString();
+    if(st)st.innerHTML='<span style="color:#16a34a">&#10003; Loaded '+data.length+' defects at '+now+'</span>';
+    var sl=document.getElementById('proxySyncLabel');
+    if(sl)sl.innerHTML='&#128994; <strong>'+path.split('\\').pop()+'</strong> — last loaded '+now;
+    logActivity('Proxy sync: loaded '+data.length+' defects from server','success');
+    if(!silent)nav('dashboard');
+    try{localStorage.setItem('dd-proxypath',path);}catch(e){}
   }catch(e){
-    var msg='Failed to connect: '+e.message;
-    if(st)st.innerHTML='<span style="color:#dc2626">'+msg+'. CORS may block direct browser access to SharePoint — use the OneDrive sync option instead.</span>';
-    toast(msg,'error');
+    var msg=e.message||'Failed to fetch';
+    if(st)st.innerHTML='<span style="color:#dc2626">&#10060; '+esc(msg)+'</span>';
+    if(!silent)toast('Proxy error: '+msg,'error');
+    logActivity('Proxy sync error: '+msg,'error');
   }
 }
+
+function startProxySync(){
+  var path=v('spProxyPath').trim();
+  if(!path){toast('Enter the server-side file path','warn');return;}
+  loadFromProxy(false);
+  if(proxyTimer)clearInterval(proxyTimer);
+  proxyTimer=setInterval(function(){loadFromProxy(true);},liveIntervalSec*1000);
+  document.getElementById('syncPill').classList.add('show');
+  document.getElementById('syncLabel').textContent='Server sync ON';
+  document.getElementById('refreshBtn').style.display='';
+  document.getElementById('refreshBtn2').style.display='';
+  var si=document.getElementById('proxySyncInfo');if(si)si.style.display='block';
+  var bs=document.getElementById('btnProxySync');if(bs)bs.style.display='none';
+  var bst=document.getElementById('btnProxyStop');if(bst)bst.style.display='';
+  toast('Server-side sync started — every '+liveIntervalSec+'s','success');
+  logActivity('Server proxy sync started: '+path,'success');
+}
+
+function stopProxySync(){
+  if(proxyTimer){clearInterval(proxyTimer);proxyTimer=null;}
+  document.getElementById('syncPill').classList.remove('show');
+  document.getElementById('refreshBtn').style.display='none';
+  document.getElementById('refreshBtn2').style.display='none';
+  var si=document.getElementById('proxySyncInfo');if(si)si.style.display='none';
+  var bs=document.getElementById('btnProxySync');if(bs)bs.style.display='';
+  var bst=document.getElementById('btnProxyStop');if(bst)bst.style.display='none';
+  toast('Server sync stopped','warn');
+}
+
+// Legacy stub — kept for any external calls
+async function loadFromUrl(){loadFromProxy(false);}
 
 function onFileChange(e){readFile(e.target.files[0]);}
 function onDrop(e){e.preventDefault();document.getElementById('dropZone').classList.remove('drag');readFile(e.dataTransfer.files[0]);}
@@ -1608,7 +1774,12 @@ function readFile(file){
   };
   reader.readAsArrayBuffer(file);
 }
-function doRefresh(){if(liveFileHandle)readLiveFile(true);else{nav('datasource');toast('No live source connected — pick a file first','warn');}}
+function doRefresh(){
+  if(liveFileHandle)readLiveFile(true);
+  else if(liveFileObject)readLiveFileFromInput(true);
+  else if(proxyTimer||v('spProxyPath'))loadFromProxy(false);
+  else{nav('datasource');toast('No live source connected — pick a file or use Server Proxy','warn');}
+}
 
 // ══════════════════════════════════════════════════
 // EXPORT
@@ -1716,6 +1887,7 @@ function copyShare(){
   try{
     if(localStorage.getItem('dd-dark')==='1'){document.body.classList.add('dark');var b=document.getElementById('darkModeBtn');if(b)b.textContent='Disable Dark';}
     var iv=localStorage.getItem('dd-interval');if(iv){liveIntervalSec=+iv;var sel=document.getElementById('refreshInterval');if(sel)sel.value=iv;}
+    var pp=localStorage.getItem('dd-proxypath');if(pp){var ppe=document.getElementById('spProxyPath');if(ppe)ppe.value=pp;}
   }catch(e){}
   renderActivityFeed();
 })();
