@@ -53,276 +53,659 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
 </script>
 <style>
-:root{--bg:#f0f4ff;--surface:#fff;--surface2:#f8faff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--brand:#2563eb;--brand-dark:#1d4ed8;--brand-light:#eff6ff;--sidebar:#0f172a;--sidebar-hover:#1e293b;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);--radius:14px;--radius-sm:8px;}
-.dark{--bg:#0f172a;--surface:#1e293b;--surface2:#162032;--border:#334155;--text:#f1f5f9;--muted:#94a3b8;--brand-light:#1e3a8a;--sidebar:#080e1a;--sidebar-hover:#1e293b;}
+:root{--bg:#f0f4ff;--surface:#fff;--surface2:#f8faff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--brand:#2563eb;--brand-dark:#1d4ed8;--brand-light:#eff6ff;--sidebar:#0f172a;--sidebar-hover:#1e293b;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--amber:#d97706;--violet:#7c3aed;--teal:#0891b2;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.14);--radius:14px;--radius-sm:8px;--radius-xs:6px;}
+.dark{--bg:#080d1a;--surface:#0f1829;--surface2:#141f35;--border:#1e2d45;--text:#e2e8f0;--muted:#64748b;--brand-light:#172554;--sidebar:#050912;--sidebar-hover:#0f1829;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:14px;}
-::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.dark ::-webkit-scrollbar-thumb{background:#475569}
-#sidebar{width:220px;min-width:220px;background:var(--sidebar);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;}
-.logo{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;}
-.logo-icon{font-size:28px;}.logo-text p{color:#fff;font-weight:700;font-size:13px;line-height:1.3;}.logo-text span{color:#93c5fd;font-size:11px;}
-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
-.nav-btn{width:100%;display:flex;align-items:center;gap:10px;padding:9px 12px;border:none;border-radius:10px;cursor:pointer;background:transparent;color:#94a3b8;font-size:13px;font-weight:500;text-align:left;transition:all .15s;}
-.nav-btn:hover{background:var(--sidebar-hover);color:#fff;}.nav-btn.active{background:#2563eb;color:#fff;}
-.nav-btn .icon{font-size:16px;width:20px;text-align:center;}
-.sidebar-footer{padding:10px 8px;border-top:1px solid rgba(255,255,255,.07);}
-.sync-pill{padding:7px 10px;border-radius:8px;background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.2);display:none;align-items:center;gap:7px;font-size:11px;color:#4ade80;margin-bottom:6px;}
-.sync-pill.show{display:flex;}.sync-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-#main{flex:1;overflow-y:auto;padding:24px;}
-.page{display:none;animation:fadeIn .2s ease;}.page.active{display:block;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:14px;transition:background .3s,color .3s;}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+/* SIDEBAR */
+#sidebar{width:224px;min-width:224px;background:var(--sidebar);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto;overflow-x:hidden;transition:width .25s;z-index:100;}
+#sidebar.collapsed{width:52px;}
+.logo{padding:16px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;min-height:60px;flex-shrink:0;}
+.logo-icon{font-size:24px;flex-shrink:0;}
+.logo-text p{color:#fff;font-weight:800;font-size:12.5px;line-height:1.3;}
+.logo-text span{color:#60a5fa;font-size:10px;letter-spacing:.05em;}
+#sidebar.collapsed .logo-text,#sidebar.collapsed .nav-label,#sidebar.collapsed .nav-group-label,#sidebar.collapsed .sidebar-footer-text{display:none!important;}
+nav{flex:1;padding:8px;display:flex;flex-direction:column;gap:1px;overflow-y:auto;}
+.nav-group-label{font-size:9px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.1em;padding:10px 10px 4px;display:block;}
+.nav-btn{width:100%;display:flex;align-items:center;gap:9px;padding:8px 10px;border:none;border-radius:9px;cursor:pointer;background:transparent;color:#94a3b8;font-size:12.5px;font-weight:500;text-align:left;transition:all .14s;white-space:nowrap;}
+.nav-btn:hover{background:var(--sidebar-hover);color:#e2e8f0;}
+.nav-btn.active{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;box-shadow:0 3px 12px rgba(37,99,235,.35);}
+.nav-btn .icon{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:rgba(220,38,38,.75);color:#fff;font-size:9px;padding:1px 5px;border-radius:99px;font-weight:700;flex-shrink:0;}
+.nav-badge.green{background:rgba(22,163,74,.75);}
+.nav-badge.amber{background:rgba(217,119,6,.75);}
+.sidebar-bottom{padding:8px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.sync-pill{padding:6px 10px;border-radius:8px;background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.25);display:none;align-items:center;gap:7px;font-size:11px;color:#4ade80;margin-bottom:5px;}
+.sync-pill.show{display:flex;}.sync-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+/* MAIN */
+#main{flex:1;overflow-y:auto;min-height:100vh;}
+.page{display:none;animation:fadeIn .18s ease;padding:22px 24px;}
+.page.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
-.topbar h1{font-size:20px;font-weight:700;}.topbar p{font-size:12px;color:var(--muted);margin-top:2px;}
-.topbar-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:20px;}
-.kpi-card{border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);}
-.kpi-icon{font-size:26px;}.kpi-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.75;color:#fff;}
-.kpi-value{font-size:28px;font-weight:800;color:#fff;line-height:1.1;}.kpi-sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px;}
-.c-slate{background:linear-gradient(135deg,#475569,#1e293b);}.c-green{background:linear-gradient(135deg,#16a34a,#14532d);}
-.c-red{background:linear-gradient(135deg,#dc2626,#7f1d1d);}.c-rose{background:linear-gradient(135deg,#e11d48,#881337);}
-.c-orange{background:linear-gradient(135deg,#ea580c,#7c2d12);}.c-amber{background:linear-gradient(135deg,#d97706,#78350f);}
-.c-blue{background:linear-gradient(135deg,#2563eb,#1e3a8a);}.c-violet{background:linear-gradient(135deg,#7c3aed,#3b0764);}
-.panel{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1px solid var(--border);}
-.panel-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:14px;}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
-@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr 1fr;}}@media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr;}}
-.filter-bar{background:var(--surface);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:16px;}
-.filter-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;align-items:end;}
-.filter-group label{display:block;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
-.filter-group select,.filter-group input{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;background:var(--surface2);color:var(--text);outline:none;}
-.filter-group select:focus,.filter-group input:focus{border-color:var(--brand);}
-.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap;}
-.b-open{background:#fee2e2;color:#991b1b;}.dark .b-open{background:rgba(220,38,38,.2);color:#fca5a5;}
-.b-fixed{background:#dcfce7;color:#166534;}.dark .b-fixed{background:rgba(22,163,74,.2);color:#86efac;}
-.b-done{background:#dbeafe;color:#1e40af;}.dark .b-done{background:rgba(37,99,235,.2);color:#93c5fd;}
-.b-notfixed{background:#ffedd5;color:#9a3412;}.dark .b-notfixed{background:rgba(234,88,12,.2);color:#fdba74;}
-.b-rft{background:#fef3c7;color:#92400e;}.dark .b-rft{background:rgba(217,119,6,.2);color:#fcd34d;}
-.b-inprog{background:#f0fdf4;color:#15803d;}.dark .b-inprog{background:rgba(22,163,74,.15);color:#86efac;}
-.b-unknown{background:#f1f5f9;color:#475569;}.b-p1{background:#dc2626;color:#fff;}.b-p2{background:#ea580c;color:#fff;}.b-p3{background:#eab308;color:#1e293b;}.b-p4{background:#cbd5e1;color:#475569;}
-.tbl-wrap{overflow-x:auto;}
+/* TOPBAR */
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
+.topbar-left h1{font-size:21px;font-weight:800;letter-spacing:-.025em;}
+.topbar-left p{font-size:12px;color:var(--muted);margin-top:3px;}
+.topbar-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:11px;margin-bottom:18px;}
+.kpi-card{border-radius:var(--radius);padding:14px 13px;display:flex;flex-direction:column;gap:5px;box-shadow:var(--shadow);cursor:pointer;transition:transform .14s,box-shadow .14s;position:relative;overflow:hidden;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;}
+.kpi-icon{font-size:20px;}
+.kpi-trend{font-size:10px;font-weight:700;padding:2px 6px;border-radius:99px;background:rgba(255,255,255,.18);color:#fff;}
+.kpi-value{font-size:30px;font-weight:900;color:#fff;line-height:1;letter-spacing:-.03em;}
+.kpi-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.72);}
+.kpi-bar{height:3px;border-radius:99px;background:rgba(255,255,255,.18);margin-top:3px;overflow:hidden;}
+.kpi-bar-fill{height:100%;border-radius:99px;background:rgba(255,255,255,.65);transition:width .6s ease;}
+.c-slate{background:linear-gradient(135deg,#334155,#0f172a);}
+.c-red{background:linear-gradient(135deg,#dc2626,#7f1d1d);}
+.c-green{background:linear-gradient(135deg,#16a34a,#14532d);}
+.c-rose{background:linear-gradient(135deg,#e11d48,#881337);}
+.c-orange{background:linear-gradient(135deg,#ea580c,#7c2d12);}
+.c-amber{background:linear-gradient(135deg,#d97706,#78350f);}
+.c-blue{background:linear-gradient(135deg,#2563eb,#1e3a8a);}
+.c-violet{background:linear-gradient(135deg,#7c3aed,#3b0764);}
+.c-teal{background:linear-gradient(135deg,#0891b2,#164e63);}
+.c-emerald{background:linear-gradient(135deg,#059669,#064e3b);}
+/* PANELS */
+.panel{background:var(--surface);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;}
+.panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.panel-action{font-size:11px;color:var(--brand);cursor:pointer;font-weight:600;background:none;border:none;padding:0;}
+.panel-action:hover{text-decoration:underline;}
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media(max-width:1200px){.grid-4{grid-template-columns:1fr 1fr;}.grid-3{grid-template-columns:1fr 1fr;}}
+@media(max-width:760px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}}
+/* FILTER BAR */
+.filter-wrap{background:var(--surface);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:12px;}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;}
+.fg{display:flex;flex-direction:column;gap:3px;min-width:100px;}
+.fg label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+.fg select,.fg input{border:1px solid var(--border);border-radius:var(--radius-xs);padding:5px 9px;font-size:12px;background:var(--surface2);color:var(--text);outline:none;height:30px;}
+.fg select:focus,.fg input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+.fg.fg-search{flex:1;min-width:180px;}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:10.5px;font-weight:700;white-space:nowrap;}
+.bs-open{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;}
+.bs-fixed{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+.bs-notfixed{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;}
+.bs-rft{background:#fefce8;color:#854d0e;border:1px solid #fde68a;}
+.bs-closed{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
+.bs-inprog{background:#f0fdfa;color:#115e59;border:1px solid #99f6e4;}
+.bs-unknown{background:#f8fafc;color:#475569;border:1px solid #e2e8f0;}
+.dark .bs-open{background:rgba(220,38,38,.15);color:#fca5a5;border-color:rgba(220,38,38,.3);}
+.dark .bs-fixed{background:rgba(22,163,74,.15);color:#86efac;border-color:rgba(22,163,74,.3);}
+.dark .bs-notfixed{background:rgba(234,88,12,.15);color:#fdba74;border-color:rgba(234,88,12,.3);}
+.dark .bs-rft{background:rgba(217,119,6,.15);color:#fcd34d;border-color:rgba(217,119,6,.3);}
+.dark .bs-closed{background:rgba(37,99,235,.15);color:#93c5fd;border-color:rgba(37,99,235,.3);}
+.bp-p1{background:#dc2626;color:#fff;}
+.bp-p2{background:#ea580c;color:#fff;}
+.bp-p3{background:#d97706;color:#fff;}
+.bp-p4{background:#64748b;color:#fff;}
+.bdt-fe{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;}
+.bdt-be{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;}
+.bdt-func{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+.bdt-ui{background:#fce7f3;color:#9d174d;border:1px solid #fbcfe8;}
+.bdt-other{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;}
+.dark .bdt-fe{background:rgba(109,40,217,.2);color:#c4b5fd;border-color:rgba(109,40,217,.3);}
+.dark .bdt-be{background:rgba(37,99,235,.2);color:#93c5fd;border-color:rgba(37,99,235,.3);}
+.dark .bdt-func{background:rgba(22,163,74,.2);color:#86efac;border-color:rgba(22,163,74,.3);}
+.dark .bdt-ui{background:rgba(219,39,119,.2);color:#f9a8d4;border-color:rgba(219,39,119,.3);}
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
 table{width:100%;border-collapse:collapse;font-size:12px;}
-thead th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--surface2);white-space:nowrap;cursor:pointer;user-select:none;border-bottom:2px solid var(--border);}
-thead th:hover{color:var(--brand);}tbody tr{border-bottom:1px solid var(--border);transition:background .12s;}tbody tr:hover{background:var(--brand-light);}
-.dark tbody tr:hover{background:rgba(37,99,235,.08);}tbody tr.row-p1{background:rgba(220,38,38,.03);}tbody td{padding:8px 12px;vertical-align:middle;}
-.td-desc{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 0 0;}
-.pagination span{font-size:11px;color:var(--muted);}.pag-btns{display:flex;gap:6px;}
-.pag-btn{padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:11px;cursor:pointer;}
-.pag-btn:disabled{opacity:.4;cursor:not-allowed;}.pag-btn:not(:disabled):hover{background:var(--brand);color:#fff;border-color:var(--brand);}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;}
-.btn-primary{background:var(--brand);color:#fff;}.btn-primary:hover{background:var(--brand-dark);}
+thead th{padding:8px 11px;text-align:left;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--surface2);white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;}
+thead th:hover{color:var(--brand);}
+thead th.sort-asc::after{content:' ▲';font-size:9px;}
+thead th.sort-desc::after{content:' ▼';font-size:9px;}
+thead th.no-sort{cursor:default;}thead th.no-sort:hover{color:var(--muted);}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:hover{background:var(--brand-light);}
+.dark tbody tr:hover{background:rgba(37,99,235,.08);}
+tbody tr.selected-row{background:rgba(37,99,235,.1)!important;}
+tbody td{padding:7px 11px;vertical-align:middle;max-width:180px;}
+.td-truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
+.td-id{font-weight:700;color:var(--brand);font-size:11px;cursor:pointer;}
+.td-id:hover{text-decoration:underline;}
+.editable-cell{cursor:pointer;position:relative;}
+.editable-cell::after{content:'✎';position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--brand);opacity:0;transition:opacity .1s;}
+.editable-cell:hover::after{opacity:.6;}
+/* CHECKBOX */
+input[type=checkbox]{width:14px;height:14px;accent-color:var(--brand);cursor:pointer;}
+/* PAGINATION */
+.pag{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-top:1px solid var(--border);flex-wrap:wrap;gap:8px;}
+.pag-info{font-size:11px;color:var(--muted);}
+.pag-btns{display:flex;gap:3px;}
+.pag-btn{padding:4px 9px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:11px;cursor:pointer;font-weight:500;}
+.pag-btn:disabled{opacity:.3;cursor:not-allowed;}
+.pag-btn:not(:disabled):hover,.pag-btn.active{background:var(--brand);color:#fff;border-color:var(--brand);}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .14s;white-space:nowrap;font-family:inherit;}
+.btn-primary{background:var(--brand);color:#fff;}.btn-primary:hover{background:var(--brand-dark);transform:translateY(-1px);}
 .btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border);}.btn-outline:hover{background:var(--surface2);color:var(--text);}
-.btn-sm{padding:5px 10px;font-size:11px;}.btn-green{background:#16a34a;color:#fff;}.btn-green:hover{background:#15803d;}
-.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.prog-label{font-size:11px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.prog-count{font-size:11px;color:var(--muted);min-width:30px;text-align:right;}
-.prog-bar-wrap{flex:2;background:var(--surface2);border-radius:99px;height:6px;overflow:hidden;}
-.prog-bar-fill{height:100%;border-radius:99px;transition:width .4s ease;}
-.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;}
+.btn-green{background:#16a34a;color:#fff;}.btn-green:hover{background:#15803d;}
+.btn-danger{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;}.btn-danger:hover{background:#fecaca;}
+.btn-amber{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}.btn-amber:hover{background:#fde68a;}
+.btn-ghost{background:transparent;color:var(--muted);border:none;padding:4px 7px;}.btn-ghost:hover{color:var(--text);background:var(--surface2);}
+.btn-sm{padding:5px 11px;font-size:11.5px;}
+.btn-xs{padding:2px 7px;font-size:10.5px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
+/* PROGRESS */
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.prog-label{font-size:11px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
+.prog-count{font-size:11px;color:var(--muted);min-width:26px;text-align:right;font-weight:600;}
+.prog-bar{flex:2;background:var(--surface2);border-radius:99px;height:5px;overflow:hidden;border:1px solid var(--border);}
+.prog-fill{height:100%;border-radius:99px;transition:width .5s ease;}
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:36px 24px;text-align:center;cursor:pointer;transition:all .2s;}
 .upload-zone:hover,.upload-zone.drag{border-color:var(--brand);background:var(--brand-light);}
-.upload-zone .uz-icon{font-size:52px;margin-bottom:14px;}.upload-zone h3{font-size:16px;font-weight:700;margin-bottom:8px;}.upload-zone p{font-size:12px;color:var(--muted);}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:999;display:none;align-items:center;justify-content:center;padding:16px;}
-.modal-overlay.show{display:flex;}.modal{background:var(--surface);border-radius:18px;padding:28px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
-.modal h2{font-size:16px;font-weight:700;margin-bottom:16px;}.modal-close{float:right;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1;}
-.info-box{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.6;margin-bottom:12px;}
-.info-blue{background:var(--brand-light);border:1px solid rgba(37,99,235,.2);color:var(--text);}
-.info-green{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--text);}
-.info-amber{background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);color:var(--text);}
-.step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
-.step-num{width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-.step-body{font-size:12px;line-height:1.6;flex:1;}.step-body strong{display:block;font-size:13px;margin-bottom:2px;}
-.url-input{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:12px;background:var(--surface2);color:var(--text);outline:none;margin-top:6px;}
-.url-input:focus{border-color:var(--brand);}
-#toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(10px);transition:all .25s;z-index:9999;pointer-events:none;}
-#toast.show{opacity:1;transform:none;}
-canvas{max-height:280px;}
+.upload-zone .uz-icon{font-size:44px;margin-bottom:10px;display:block;}
+.upload-zone h3{font-size:14px;font-weight:700;margin-bottom:5px;}
+.upload-zone p{font-size:12px;color:var(--muted);line-height:1.5;}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:9000;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:18px;padding:22px 26px;max-width:660px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg);border:1px solid var(--border);}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.modal-hdr h2{font-size:15px;font-weight:800;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);line-height:1;padding:3px 7px;border-radius:6px;}.modal-close:hover{background:var(--surface2);}
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.form-group input,.form-group select,.form-group textarea{border:1px solid var(--border);border-radius:var(--radius-xs);padding:7px 10px;font-size:12px;background:var(--surface2);color:var(--text);outline:none;font-family:inherit;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+.form-group textarea{min-height:66px;resize:vertical;}
+/* INFO BOXES */
+.info-box{border-radius:9px;padding:11px 13px;font-size:12px;line-height:1.6;}
+.ib-blue{background:var(--brand-light);border:1px solid rgba(37,99,235,.2);color:var(--text);}
+.ib-green{background:rgba(22,163,74,.07);border:1px solid rgba(22,163,74,.2);color:var(--text);}
+.ib-amber{background:rgba(217,119,6,.07);border:1px solid rgba(217,119,6,.2);color:var(--text);}
+.ib-red{background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.2);color:var(--text);}
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--surface2);border-radius:9px;padding:3px;width:fit-content;margin-bottom:14px;border:1px solid var(--border);}
+.tab-btn{padding:5px 13px;border-radius:7px;border:none;cursor:pointer;font-size:11.5px;font-weight:600;background:transparent;color:var(--muted);transition:all .14s;font-family:inherit;}
+.tab-btn.active{background:var(--brand);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.28);}
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:22px;z-index:99999;display:flex;flex-direction:column;gap:5px;pointer-events:none;max-width:320px;}
+.toast-item{background:#1e293b;color:#fff;padding:9px 14px;border-radius:9px;font-size:12.5px;font-weight:500;box-shadow:var(--shadow-lg);transform:translateX(110%);transition:transform .28s ease;border-left:3px solid var(--brand);}
+.toast-item.show{transform:none;pointer-events:auto;}
+.toast-item.t-success{border-color:#16a34a;}
+.toast-item.t-error{border-color:#dc2626;}
+.toast-item.t-warn{border-color:#d97706;}
+/* PRODUCT CARDS */
+.product-card{border-radius:var(--radius);border:2px solid var(--border);padding:13px;cursor:pointer;transition:all .14s;background:var(--surface);}
+.product-card:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:var(--shadow);}
+.product-card.active{border-color:var(--brand);background:var(--brand-light);}
+.dark .product-card.active{background:rgba(37,99,235,.1);}
+.pc-code{font-size:10px;font-weight:700;color:var(--brand);}
+.pc-name{font-size:13px;font-weight:700;margin:3px 0;}
+.pc-count{font-size:11px;color:var(--muted);}
+.stat-strip{display:flex;gap:0;border-radius:6px;overflow:hidden;height:6px;margin-top:7px;}
+.stat-seg{height:100%;transition:flex .5s ease;}
+/* ACTIVITY */
+.activity-item{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.activity-body{font-size:12px;line-height:1.5;flex:1;}
+.activity-time{font-size:10px;color:var(--muted);white-space:nowrap;}
+/* RFT PANEL */
+.rft-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.rft-item:last-child{border-bottom:none;}
+.rft-info{flex:1;min-width:0;}
+.rft-desc{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rft-meta{font-size:11px;color:var(--muted);}
+/* BULK BAR */
+.bulk-bar{display:none;align-items:center;gap:10px;padding:8px 14px;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.25);border-radius:var(--radius-sm);margin-bottom:10px;flex-wrap:wrap;}
+.bulk-bar.show{display:flex;}
+.bulk-count{font-size:12px;font-weight:700;color:var(--brand);}
+/* PANEL SCROLL */
+.panel-scroll{max-height:300px;overflow-y:auto;}
+/* CHART */
+.chart-wrap{position:relative;height:230px;}
+canvas{position:absolute;inset:0;width:100%!important;height:100%!important;}
+/* INLINE SELECT */
+.inline-select{border:1px solid var(--brand);border-radius:4px;padding:2px 5px;font-size:11px;background:var(--surface);color:var(--text);outline:none;cursor:pointer;font-family:inherit;}
+/* STAT DIVIDER */
+.section-divider{display:flex;align-items:center;gap:12px;margin:20px 0 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.section-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+/* PRODUCT MINI KPI */
+.mini-kpi{background:var(--surface2);border-radius:9px;padding:10px 12px;border:1px solid var(--border);text-align:center;}
+.mini-kpi-value{font-size:22px;font-weight:900;color:var(--text);line-height:1;}
+.mini-kpi-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+/* RESPONSIVE */
+@media(max-width:900px){#sidebar{width:52px;}.logo-text,.nav-label,.nav-group-label{display:none!important;}}
 </style>
 
+
+<!-- SIDEBAR -->
 <div id="sidebar">
-  <div class="logo"><div class="logo-icon">&#128293;</div><div class="logo-text"><p>Defect Dashboard</p><span>Fire Endorsement QA</span></div></div>
+  <div class="logo">
+    <div class="logo-icon">&#128293;</div>
+    <div class="logo-text"><p>Defect Dashboard</p><span>Fire Endorsement QA</span></div>
+  </div>
   <nav>
-    <button class="nav-btn active" onclick="nav('dashboard')"><span class="icon">&#128202;</span>Dashboard</button>
-    <button class="nav-btn" onclick="nav('defects')"><span class="icon">&#128027;</span>Defects</button>
-    <button class="nav-btn" onclick="nav('insights')"><span class="icon">&#128161;</span>Insights</button>
-    <button class="nav-btn" onclick="nav('datasource')"><span class="icon">&#128193;</span>Data Source</button>
+    <span class="nav-group-label">Analytics</span>
+    <button class="nav-btn active" onclick="nav('dashboard')"><span class="icon">&#128202;</span><span class="nav-label">Overview</span></button>
+    <button class="nav-btn" onclick="nav('products')"><span class="icon">&#127981;</span><span class="nav-label">Products</span><span class="nav-badge" id="nb-products">4</span></button>
+    <button class="nav-btn" onclick="nav('insights')"><span class="icon">&#128161;</span><span class="nav-label">Insights</span></button>
+    <span class="nav-group-label">Manage</span>
+    <button class="nav-btn" onclick="nav('defects')"><span class="icon">&#128027;</span><span class="nav-label">All Defects</span><span class="nav-badge" id="nb-open">0</span></button>
+    <button class="nav-btn" onclick="nav('add')"><span class="icon">&#10133;</span><span class="nav-label">Add Defect</span></button>
+    <button class="nav-btn" onclick="nav('assign')"><span class="icon">&#128101;</span><span class="nav-label">Assign Tasks</span></button>
+    <span class="nav-group-label">Settings</span>
+    <button class="nav-btn" onclick="nav('datasource')"><span class="icon">&#128193;</span><span class="nav-label">Data Source</span></button>
+    <button class="nav-btn" onclick="nav('settings')"><span class="icon">&#9881;&#65039;</span><span class="nav-label">Settings</span></button>
   </nav>
-  <div class="sync-pill" id="syncPill"><div class="sync-dot"></div><span id="syncLabel">Auto-sync ON</span></div>
-  <div class="sidebar-footer">
-    <button class="nav-btn btn-sm" onclick="toggleDark()"><span class="icon">&#127769;</span>Dark Mode</button>
-    <button class="nav-btn btn-sm" onclick="showShareModal()"><span class="icon">&#128279;</span>Share Link</button>
+  <div class="sidebar-bottom">
+    <div class="sync-pill" id="syncPill"><div class="sync-dot"></div><span id="syncLabel">Live sync ON</span></div>
+    <button class="nav-btn" onclick="toggleDark()"><span class="icon">&#127769;</span><span class="nav-label">Dark Mode</span></button>
+    <button class="nav-btn" onclick="openShareModal()"><span class="icon">&#128279;</span><span class="nav-label">Share Link</span></button>
   </div>
 </div>
 
+<!-- MAIN -->
 <div id="main">
-  <!-- DASHBOARD -->
-  <div id="pg-dashboard" class="page active">
-    <div class="topbar">
-      <div><h1>&#128293; Fire Endorsement – Defect Dashboard</h1><p id="lastRefresh">No data loaded — go to Data Source to upload your Excel file</p></div>
-      <div class="topbar-actions">
-        <button class="btn btn-outline btn-sm" onclick="nav('datasource')">&#128193; Upload Excel</button>
-        <button class="btn btn-outline btn-sm" id="refreshBtn" onclick="doRefresh()" style="display:none">&#128260; Refresh</button>
-        <button class="btn btn-outline btn-sm" onclick="toggleDark()">&#127769;</button>
-      </div>
+
+<!-- ═══ OVERVIEW ═══ -->
+<div id="pg-dashboard" class="page active">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>&#128293; Fire Endorsement — Defect Overview</h1>
+      <p id="lastRefresh">No data loaded &mdash; go to Data Source to upload your Excel</p>
     </div>
-    <div class="kpi-grid">
-      <div class="kpi-card c-slate"><div class="kpi-icon">&#128203;</div><div><div class="kpi-label">Total Defects</div><div class="kpi-value" id="k-total">&#8211;</div><div class="kpi-sub">all defects</div></div></div>
-      <div class="kpi-card c-red"><div class="kpi-icon">&#128308;</div><div><div class="kpi-label">Open</div><div class="kpi-value" id="k-open">&#8211;</div><div class="kpi-sub">need attention</div></div></div>
-      <div class="kpi-card c-green"><div class="kpi-icon">&#9989;</div><div><div class="kpi-label">Fixed / Closed</div><div class="kpi-value" id="k-fixed">&#8211;</div><div class="kpi-sub">resolved</div></div></div>
-      <div class="kpi-card c-rose"><div class="kpi-icon">&#128680;</div><div><div class="kpi-label">P1 Critical</div><div class="kpi-value" id="k-p1">&#8211;</div><div class="kpi-sub">critical priority</div></div></div>
-      <div class="kpi-card c-orange"><div class="kpi-icon">&#9888;&#65039;</div><div><div class="kpi-label">P2 High</div><div class="kpi-value" id="k-p2">&#8211;</div><div class="kpi-sub">high priority</div></div></div>
-      <div class="kpi-card c-blue"><div class="kpi-icon">&#128296;</div><div><div class="kpi-label">In Progress</div><div class="kpi-value" id="k-inprog">&#8211;</div><div class="kpi-sub">being fixed</div></div></div>
-      <div class="kpi-card c-amber"><div class="kpi-icon">&#128230;</div><div><div class="kpi-label">Products</div><div class="kpi-value" id="k-products">&#8211;</div><div class="kpi-sub">unique products</div></div></div>
-      <div class="kpi-card c-violet"><div class="kpi-icon">&#128187;</div><div><div class="kpi-label">Screens</div><div class="kpi-value" id="k-screens">&#8211;</div><div class="kpi-sub">affected screens</div></div></div>
-    </div>
-    <div class="grid-2" style="margin-bottom:16px">
-      <div class="panel"><div class="panel-title">Status Breakdown</div><canvas id="chartStatus"></canvas></div>
-      <div class="panel"><div class="panel-title">Priority Breakdown</div><canvas id="chartPriority"></canvas></div>
-    </div>
-    <div class="grid-2">
-      <div class="panel"><div class="panel-title">Defects by Product</div><canvas id="chartProduct"></canvas></div>
-      <div class="panel"><div class="panel-title">Top Screens Affected</div><canvas id="chartScreens"></canvas></div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm" onclick="nav('datasource')">&#128193; Load Data</button>
+      <button class="btn btn-outline btn-sm" id="refreshBtn" onclick="doRefresh()" style="display:none">&#128260; Refresh</button>
+      <button class="btn btn-outline btn-sm" onclick="exportCSV()">&#11015;&#65039; Export CSV</button>
+      <button class="btn btn-outline btn-sm" onclick="toggleDark()">&#127769;</button>
     </div>
   </div>
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card c-slate" onclick="filterByStatus('')"><div class="kpi-top"><span class="kpi-icon">&#128203;</span><span class="kpi-trend" id="kt-total"></span></div><div class="kpi-value" id="k-total">&#8211;</div><div class="kpi-label">Total Defects</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div></div>
+    <div class="kpi-card c-red" onclick="filterByStatus('Open')"><div class="kpi-top"><span class="kpi-icon">&#128308;</span><span class="kpi-trend" id="kt-open"></span></div><div class="kpi-value" id="k-open">&#8211;</div><div class="kpi-label">Open</div><div class="kpi-bar"><div class="kpi-bar-fill" id="kb-open" style="width:0%"></div></div></div>
+    <div class="kpi-card c-green" onclick="filterByStatus('Fixed')"><div class="kpi-top"><span class="kpi-icon">&#9989;</span><span class="kpi-trend" id="kt-fixed"></span></div><div class="kpi-value" id="k-fixed">&#8211;</div><div class="kpi-label">Fixed</div><div class="kpi-bar"><div class="kpi-bar-fill" id="kb-fixed" style="width:0%"></div></div></div>
+    <div class="kpi-card c-amber" onclick="filterByStatus('Ready for Test')"><div class="kpi-top"><span class="kpi-icon">&#128269;</span><span class="kpi-trend" id="kt-rft"></span></div><div class="kpi-value" id="k-rft">&#8211;</div><div class="kpi-label">Ready for Test</div><div class="kpi-bar"><div class="kpi-bar-fill" id="kb-rft" style="width:0%"></div></div></div>
+    <div class="kpi-card c-orange" onclick="filterByStatus('Not Fixed')"><div class="kpi-top"><span class="kpi-icon">&#10060;</span></div><div class="kpi-value" id="k-notfixed">&#8211;</div><div class="kpi-label">Not Fixed</div><div class="kpi-bar"><div class="kpi-bar-fill" id="kb-notfixed" style="width:0%"></div></div></div>
+    <div class="kpi-card c-rose" onclick="filterByPriority('P1')"><div class="kpi-top"><span class="kpi-icon">&#128680;</span></div><div class="kpi-value" id="k-p1">&#8211;</div><div class="kpi-label">P1 Critical</div><div class="kpi-bar"><div class="kpi-bar-fill" id="kb-p1" style="width:0%"></div></div></div>
+    <div class="kpi-card c-blue" onclick="filterByType('Backend/API')"><div class="kpi-top"><span class="kpi-icon">&#128421;&#65039;</span></div><div class="kpi-value" id="k-be">&#8211;</div><div class="kpi-label">Backend/API</div><div class="kpi-bar"><div class="kpi-bar-fill" id="kb-be" style="width:0%"></div></div></div>
+    <div class="kpi-card c-violet" onclick="filterByType('Enable/Disable')"><div class="kpi-top"><span class="kpi-icon">&#128295;</span></div><div class="kpi-value" id="k-func">&#8211;</div><div class="kpi-label">Enable/Disable</div><div class="kpi-bar"><div class="kpi-bar-fill" id="kb-func" style="width:0%"></div></div></div>
+  </div>
+  <!-- Charts row 1 -->
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Status Distribution</span></div><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div>
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Priority Breakdown</span></div><div class="chart-wrap"><canvas id="chartPriority"></canvas></div></div>
+  </div>
+  <!-- Charts row 2 -->
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Defects by Product (Stacked)</span></div><div class="chart-wrap"><canvas id="chartProduct"></canvas></div></div>
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Defect Type Breakdown</span></div><div class="chart-wrap"><canvas id="chartType"></canvas></div></div>
+  </div>
+  <!-- Bottom row: screens + assignees + RFT panel -->
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Top Screens</span><button class="panel-action" onclick="nav('insights')">All &#8594;</button></div><div id="topScreensList"></div></div>
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Assignee Workload</span><button class="panel-action" onclick="nav('assign')">Assign &#8594;</button></div><div id="assigneeList"></div></div>
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">&#128269; Ready for Test</span><button class="panel-action" onclick="filterByStatus('Ready for Test')">View All &#8594;</button></div><div id="rftPanel" class="panel-scroll"></div></div>
+  </div>
+  <!-- Activity Feed -->
+  <div class="panel"><div class="panel-hdr"><span class="panel-title">&#128336; Recent Activity</span><button class="panel-action" onclick="document.getElementById('activityFeed').innerHTML=activityLog.slice(0,50).map(actFeedItem).join('')">Show All</button></div><div id="activityFeed" class="panel-scroll"></div></div>
+</div>
 
-  <!-- DEFECTS -->
-  <div id="pg-defects" class="page">
-    <div class="topbar">
-      <div><h1>Defect List</h1><p id="defectCount">0 defects</p></div>
-      <div class="topbar-actions">
-        <button class="btn btn-outline btn-sm" onclick="exportCSV()">&#11015;&#65039; Export CSV</button>
-        <button class="btn btn-outline btn-sm" id="refreshBtn2" onclick="doRefresh()" style="display:none">&#128260; Refresh</button>
+<!-- ═══ PRODUCTS ═══ -->
+<div id="pg-products" class="page">
+  <div class="topbar">
+    <div class="topbar-left"><h1>Products</h1><p>Select a product to drill down &mdash; full CRUD, filters &amp; charts</p></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" onclick="nav('add')">&#10133; Add Defect</button>
+      <button class="btn btn-outline btn-sm" onclick="exportCSV()">&#11015;&#65039; Export</button>
+    </div>
+  </div>
+  <div class="grid-4" style="margin-bottom:18px" id="productCards"></div>
+  <div id="productDrilldown"></div>
+</div>
+
+<!-- ═══ ALL DEFECTS ═══ -->
+<div id="pg-defects" class="page">
+  <div class="topbar">
+    <div class="topbar-left"><h1>All Defects</h1><p id="defectCountLabel">0 defects</p></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" onclick="nav('add')">&#10133; Add Defect</button>
+      <button class="btn btn-outline btn-sm" onclick="exportCSV()">&#11015;&#65039; Export CSV</button>
+      <button class="btn btn-outline btn-sm" onclick="clearFilters()">&#10006; Clear Filters</button>
+      <button class="btn btn-outline btn-sm" id="refreshBtn2" onclick="doRefresh()" style="display:none">&#128260; Refresh</button>
+    </div>
+  </div>
+  <div class="filter-wrap">
+    <div class="filter-row">
+      <div class="fg"><label>Product</label><select id="f-product" onchange="applyFilter()"><option value="">All Products</option></select></div>
+      <div class="fg"><label>Source Sheet</label><select id="f-sheet" onchange="applyFilter()"><option value="">All Sheets</option></select></div>
+      <div class="fg"><label>Status</label><select id="f-status" onchange="applyFilter()"><option value="">All Status</option></select></div>
+      <div class="fg"><label>Priority</label><select id="f-priority" onchange="applyFilter()"><option value="">All Priority</option></select></div>
+      <div class="fg"><label>Defect Type</label><select id="f-type" onchange="applyFilter()"><option value="">All Types</option></select></div>
+      <div class="fg"><label>Tester</label><select id="f-tester" onchange="applyFilter()"><option value="">All Testers</option></select></div>
+      <div class="fg"><label>Assignee</label><select id="f-assignee" onchange="applyFilter()"><option value="">All Assignees</option></select></div>
+      <div class="fg fg-search"><label>Search</label><input id="f-search" placeholder="Search defect ID, description, screen, OPUS ref..." oninput="applyFilter()"/></div>
+    </div>
+  </div>
+  <!-- Bulk action bar -->
+  <div class="bulk-bar" id="bulkBar">
+    <span class="bulk-count" id="bulkCount">0 selected</span>
+    <select id="bulkStatusSel" class="inline-select"><option value="">Change Status...</option><option>Open</option><option>In Progress</option><option>Fixed</option><option>Not Fixed</option><option>Ready for Test</option><option>Closed</option></select>
+    <button class="btn btn-sm btn-outline" onclick="bulkSetStatus()">&#10003; Apply Status</button>
+    <select id="bulkAssigneeSel" class="inline-select" style="min-width:140px"><option value="">Reassign to...</option></select>
+    <button class="btn btn-sm btn-outline" onclick="bulkReassign()">&#128101; Reassign</button>
+    <button class="btn btn-sm btn-danger" onclick="bulkDelete()">&#128465; Delete Selected</button>
+    <button class="btn btn-sm btn-ghost" onclick="clearSelection()" style="margin-left:auto">&#10006; Clear</button>
+  </div>
+  <div class="panel" style="padding:0;overflow:hidden">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th class="no-sort" style="width:32px"><input type="checkbox" id="chkAll" onchange="toggleSelectAll(this.checked)" title="Select all"></th>
+          <th onclick="sortBy('defectID')">ID</th>
+          <th onclick="sortBy('productCode')">Product</th>
+          <th onclick="sortBy('sourceSheet')">Sheet</th>
+          <th onclick="sortBy('endtCode')">Endt Code</th>
+          <th onclick="sortBy('screenName')">Screen</th>
+          <th onclick="sortBy('description')">Description</th>
+          <th onclick="sortBy('defectType')">Type</th>
+          <th onclick="sortBy('priority')">Priority</th>
+          <th onclick="sortBy('status')">Status</th>
+          <th onclick="sortBy('tester')">Tester</th>
+          <th onclick="sortBy('devAssignee')">Assignee</th>
+          <th onclick="sortBy('opusRef')">OPUS Ref</th>
+          <th class="no-sort">Actions</th>
+        </tr></thead>
+        <tbody id="tblBody"></tbody>
+      </table>
+    </div>
+    <div class="pag">
+      <span class="pag-info" id="pagInfo"></span>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--muted)">Rows:</span>
+        <select id="pageSizeSelect" style="font-size:11px;border:1px solid var(--border);border-radius:4px;padding:2px 6px;background:var(--surface2);color:var(--text)" onchange="pageSize=+this.value;page=1;renderTable()">
+          <option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="999">All</option>
+        </select>
+        <div class="pag-btns">
+          <button class="pag-btn" id="btnFirst" onclick="page=1;renderTable()">&#171;</button>
+          <button class="pag-btn" id="btnPrev" onclick="changePage(-1)">&#8592;</button>
+          <span id="pageNums" style="display:flex;gap:2px"></span>
+          <button class="pag-btn" id="btnNext" onclick="changePage(1)">&#8594;</button>
+          <button class="pag-btn" id="btnLast" onclick="page=totalPages();renderTable()">&#187;</button>
+        </div>
       </div>
     </div>
-    <div class="filter-bar">
-      <div class="filter-row">
-        <div class="filter-group"><label>Product</label><select id="f-product" onchange="applyFilter()"><option value="">All</option></select></div>
-        <div class="filter-group"><label>Status</label><select id="f-status" onchange="applyFilter()"><option value="">All</option></select></div>
-        <div class="filter-group"><label>Priority</label><select id="f-priority" onchange="applyFilter()"><option value="">All</option></select></div>
-        <div class="filter-group"><label>Assignee</label><select id="f-assignee" onchange="applyFilter()"><option value="">All</option></select></div>
-        <div class="filter-group"><label>Tester</label><select id="f-tester" onchange="applyFilter()"><option value="">All</option></select></div>
-        <div class="filter-group"><label>Search</label><input id="f-search" placeholder="Search..." oninput="applyFilter()"/></div>
+  </div>
+</div>
+
+<!-- ═══ INSIGHTS ═══ -->
+<div id="pg-insights" class="page">
+  <div class="topbar"><div class="topbar-left"><h1>&#128161; Insights &amp; Analytics</h1><p>Deep analysis of defect patterns and team performance</p></div></div>
+  <div class="kpi-grid" id="insightKPIs" style="margin-bottom:18px"></div>
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Fix Rate by Product (%)</span></div><div class="chart-wrap"><canvas id="chartFixRate"></canvas></div></div>
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Status by Defect Type (Stacked)</span></div><div class="chart-wrap"><canvas id="chartTrend"></canvas></div></div>
+  </div>
+  <div class="grid-3">
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Top 10 Screens</span></div><div id="insightScreens" class="panel-scroll"></div></div>
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Endt Code Breakdown</span></div><div id="insightEndts" class="panel-scroll"></div></div>
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Tester Summary</span></div><div id="insightTesters" class="panel-scroll"></div></div>
+  </div>
+</div>
+
+<!-- ═══ ADD DEFECT ═══ -->
+<div id="pg-add" class="page">
+  <div class="topbar"><div class="topbar-left"><h1>&#10133; Add Defect</h1><p>Create a new defect record — it appears immediately in all views</p></div></div>
+  <div style="max-width:780px">
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-group"><label>Defect ID (auto)</label><input id="af-id" placeholder="Auto-generated" readonly style="background:var(--surface2);color:var(--muted)"/></div>
+        <div class="form-group"><label>Product Code *</label><select id="af-product" onchange="syncSheetFromProduct('af-product','af-sheet')"><option value="">Select...</option><option>040100</option><option>040300</option><option>040700</option><option>040800</option></select></div>
+        <div class="form-group"><label>Source Sheet *</label><select id="af-sheet"><option value="">Select...</option><option>Fire_040100</option><option>House Owner_040300</option><option>SmartHome Cover- 040700</option><option>Commercial Fire_040800</option></select></div>
+        <div class="form-group"><label>Endt Code</label><input id="af-endt" placeholder="e.g. 63-Cancellation by insured"/></div>
+        <div class="form-group"><label>Screen Name *</label><input id="af-screen" list="screenSuggestions" placeholder="e.g. Coverage Screen"/></div>
+        <div class="form-group"><label>Priority *</label><select id="af-priority"><option>P1</option><option>P2</option><option selected>P3</option><option>P4</option></select></div>
+        <div class="form-group"><label>Status *</label><select id="af-status"><option>Open</option><option>In Progress</option><option>Fixed</option><option>Not Fixed</option><option>Ready for Test</option><option>Closed</option></select></div>
+        <div class="form-group"><label>Defect Type</label><select id="af-type"><option>Functional</option><option>Enable/Disable</option><option>Backend/API</option><option>UI/UX &amp; Labels</option><option>Other</option></select></div>
+        <div class="form-group"><label>Tester</label><input id="af-tester" list="testerSuggestions" placeholder="Tester name"/></div>
+        <div class="form-group"><label>Dev Assignee</label><input id="af-assignee" list="assigneeSuggestions" placeholder="Developer name"/></div>
+        <div class="form-group"><label>OPUS Reference</label><input id="af-opus" placeholder="e.g. OPUSM-29266"/></div>
+        <div class="form-group"><label>Legacy Reference</label><input id="af-legacy" placeholder="Legacy ref no."/></div>
+        <div class="form-group full"><label>Description *</label><textarea id="af-desc" placeholder="Describe the defect in detail..."></textarea></div>
+        <div class="form-group full"><label>Comments / Notes</label><textarea id="af-comments" placeholder="Additional comments, workarounds, dependencies..."></textarea></div>
+        <div class="form-group full"><label>Test Data</label><textarea id="af-testdata" placeholder="Test data / test steps used..." style="min-height:52px"></textarea></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+        <button class="btn btn-primary" onclick="saveDefect()">&#128190; Save Defect</button>
+        <button class="btn btn-outline" onclick="clearAddForm()">&#10006; Clear</button>
+      </div>
+    </div>
+  </div>
+  <datalist id="screenSuggestions"></datalist>
+  <datalist id="testerSuggestions"></datalist>
+  <datalist id="assigneeSuggestions"></datalist>
+</div>
+
+<!-- ═══ ASSIGN TASKS ═══ -->
+<div id="pg-assign" class="page">
+  <div class="topbar">
+    <div class="topbar-left"><h1>&#128101; Assign Tasks</h1><p>Reassign open defects to developers — see workload at a glance</p></div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm" onclick="renderAssignPage()">&#128260; Refresh</button>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Developer Workload (Open)</span></div><div class="chart-wrap"><canvas id="chartWorkload"></canvas></div></div>
+    <div class="panel"><div class="panel-hdr"><span class="panel-title">Unassigned Open Defects</span><span id="unassignedCount" class="nav-badge" style="font-size:11px">0</span></div><div id="unassignedList" class="panel-scroll"></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hdr"><span class="panel-title">Bulk Reassign — Open Defects by Screen</span></div>
+    <div id="assignScreenList"></div>
+  </div>
+</div>
+
+<!-- ═══ DATA SOURCE ═══ -->
+<div id="pg-datasource" class="page">
+  <div class="topbar"><div class="topbar-left"><h1>&#128193; Data Source</h1><p>Connect your Fire Endorsement defect tracker</p></div></div>
+  <div style="max-width:760px;display:flex;flex-direction:column;gap:14px">
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-title">&#9312; Live Sync — OneDrive-synced Excel (Recommended)</span></div>
+      <div class="info-box ib-green" style="margin-bottom:12px">
+        <strong>How it works:</strong> Your SharePoint Excel is synced to your PC via OneDrive. Pick the file once &mdash; the dashboard auto-refreshes every 60 seconds. Any team edit in SharePoint reflects here automatically.<br/><br/>
+        <strong>Typical location:</strong> <code style="background:rgba(0,0,0,.07);padding:2px 7px;border-radius:4px;font-size:11px">C:\Users\...\OneDrive - Allianz\Endorsement_Defect_Dashboard.xlsx</code>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="pickLocalFile()" id="btnPickFile">&#128196; Pick Synced Excel File</button>
+        <span id="liveStatus" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div id="liveFileInfo" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);font-size:12px">
+        <span id="liveFileName"></span>&nbsp;&nbsp;
+        <button class="btn btn-danger btn-xs" onclick="stopLiveSync()">&#9632; Stop Sync</button>
+        <button class="btn btn-outline btn-xs" onclick="readLiveFile(true)" style="margin-left:4px">&#128260; Reload Now</button>
       </div>
     </div>
     <div class="panel">
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr>
-            <th onclick="sortBy('id')">#</th>
-            <th onclick="sortBy('product')">Product</th>
-            <th onclick="sortBy('endtCode')">Endt Code</th>
-            <th onclick="sortBy('screenName')">Screen</th>
-            <th>Description</th>
-            <th onclick="sortBy('priority')">Priority</th>
-            <th onclick="sortBy('status')">Status</th>
-            <th onclick="sortBy('tester')">Tester</th>
-            <th onclick="sortBy('devAssignee')">Assignee</th>
-            <th onclick="sortBy('eta')">ETA</th>
-          </tr></thead>
-          <tbody id="tblBody"></tbody>
-        </table>
+      <div class="panel-hdr"><span class="panel-title">&#9313; SharePoint Direct URL Sync</span></div>
+      <div class="info-box ib-amber" style="margin-bottom:12px">
+        <strong>Note:</strong> Direct SharePoint URL fetch is blocked by CORS in browsers. The recommended approach is to use the OneDrive-synced file above. If your SharePoint is accessible via network share, use the option below.
       </div>
-      <div class="pagination">
-        <span id="pagInfo"></span>
-        <div class="pag-btns">
-          <button class="pag-btn" id="btnPrev" onclick="changePage(-1)">&#8592; Prev</button>
-          <button class="pag-btn" id="btnNext" onclick="changePage(1)">Next &#8594;</button>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div class="fg" style="flex:1;min-width:280px">
+          <label>SharePoint / Network Excel URL or Path</label>
+          <input id="spUrl" placeholder="\\server\share\file.xlsx  or  https://..." style="height:32px;border:1px solid var(--border);border-radius:var(--radius-xs);padding:5px 10px;font-size:12px;background:var(--surface2);color:var(--text);outline:none"/>
         </div>
+        <button class="btn btn-primary btn-sm" onclick="loadFromUrl()">&#128279; Connect</button>
       </div>
+      <div id="spStatus" style="margin-top:8px;font-size:12px;color:var(--muted)"></div>
     </div>
-  </div>
-
-  <!-- INSIGHTS -->
-  <div id="pg-insights" class="page">
-    <div class="topbar"><div><h1>Insights</h1><p>Smart analysis of defect patterns</p></div></div>
-    <div class="grid-3" style="margin-bottom:16px" id="insightCards"></div>
-    <div class="grid-2">
-      <div class="panel"><div class="panel-title">Top 10 Screens by Defects</div><div id="topModules"></div></div>
-      <div class="panel"><div class="panel-title">Defects by Assignee</div><div id="assigneeBreakdown"></div></div>
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-title">&#9314; Upload Excel File</span></div>
+      <div class="info-box ib-blue" style="margin-bottom:12px">Upload <strong>Endorsement_Defect_Dashboard.xlsx</strong> directly. RawData and all product sheets are auto-parsed. Re-upload to refresh.</div>
+      <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="onDrop(event)">
+        <span class="uz-icon">&#128194;</span>
+        <h3>Drop Excel file here or click to browse</h3>
+        <p>Supports .xlsx &nbsp;|&nbsp; All sheets auto-detected &nbsp;|&nbsp; 18 columns auto-mapped</p>
+        <p id="uploadedFileName" style="margin-top:8px;font-weight:700;color:var(--brand)"></p>
+      </div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="onFileChange(event)"/>
     </div>
-  </div>
-
-  <!-- DATA SOURCE -->
-  <div id="pg-datasource" class="page">
-    <div class="topbar"><div><h1>Data Source</h1><p>Connect your Fire Endorsement defect tracker</p></div></div>
-    <div style="max-width:720px">
-      <div class="panel" style="margin-bottom:16px">
-        <div class="panel-title">&#9312; Upload Excel File (Recommended)</div>
-        <div class="info-box info-blue" style="margin-bottom:14px">Upload your <strong>Endorsement_Defect_Dashboard.xlsx</strong> from SharePoint or your local drive. Re-upload any time to refresh with the latest data.</div>
-        <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="onDrop(event)">
-          <div class="uz-icon">&#128194;</div>
-          <h3>Drop Excel file here or click to browse</h3>
-          <p>Supports .xlsx and .xls &mdash; columns are auto-detected</p>
-          <p id="uploadedFileName" style="margin-top:10px;font-weight:600;color:var(--brand)"></p>
-        </div>
-        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="onFileChange(event)"/>
-      </div>
-      <div class="panel" style="margin-bottom:16px">
-        <div class="panel-title">&#9313; Live Auto-Sync from OneDrive (Recommended for dynamic updates)</div>
-        <div class="info-box info-green" style="margin-bottom:14px">
-          <strong>How this works:</strong><br/>
-          Your SharePoint Excel is already synced to your PC via OneDrive. Pick the synced file once &mdash; the dashboard will <strong>auto-refresh every 60 seconds</strong>. Whenever anyone updates the Excel in SharePoint, OneDrive syncs it, and the dashboard updates automatically.<br/><br/>
-          <strong>Your synced file is likely at:</strong><br/>
-          <code style="background:rgba(0,0,0,.06);padding:2px 6px;border-radius:4px;font-size:11px">C:\Users\...\OneDrive - Allianz\Endorsement_Defect_Dashboard.xlsx</code>
-        </div>
-        <button class="btn btn-primary" onclick="pickLocalFile()" id="btnPickFile">&#128196; Pick Synced Excel File (OneDrive)</button>
-        <div id="liveStatus" style="margin-top:10px;font-size:12px;color:var(--muted)"></div>
-        <div id="liveFileInfo" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);font-size:12px;">
-          <span id="liveFileName"></span>
-          &nbsp;&nbsp;<button class="btn btn-outline btn-sm" onclick="stopLiveSync()" style="padding:3px 10px">&#9632; Stop sync</button>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-title">&#9314; Load Demo Data</div>
-        <div class="info-box info-green" style="margin-bottom:14px">Load 20 realistic sample defects to explore dashboard features.</div>
-        <button class="btn btn-green" onclick="loadDemoData()">&#9654; Load Demo Data</button>
-      </div>
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-title">&#9315; Load Demo Data</span></div>
+      <div class="info-box ib-amber" style="margin-bottom:10px">Load 292 sample defects matching all 4 products to explore every feature.</div>
+      <button class="btn btn-green" onclick="loadDemoData()">&#9654; Load Demo Data (292 defects, 4 Products)</button>
     </div>
   </div>
 </div>
 
-<!-- SHARE MODAL -->
+<!-- ═══ SETTINGS ═══ -->
+<div id="pg-settings" class="page">
+  <div class="topbar"><div class="topbar-left"><h1>&#9881;&#65039; Settings</h1><p>Customize your dashboard</p></div></div>
+  <div style="max-width:580px;display:flex;flex-direction:column;gap:12px">
+    <div class="panel">
+      <div class="panel-title" style="margin-bottom:12px">Appearance</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:13px">Dark Mode</strong><p style="font-size:11px;color:var(--muted)">Toggle dark/light theme</p></div><button class="btn btn-outline btn-sm" onclick="toggleDark()" id="darkModeBtn">Enable Dark</button></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:13px">Default Page Size</strong><p style="font-size:11px;color:var(--muted)">Rows per page in defect table</p></div>
+          <select class="inline-select" onchange="pageSize=+this.value;renderTable()" id="settingsPageSize"><option value="20">20 rows</option><option value="50">50 rows</option><option value="100">100 rows</option></select>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:13px">Auto-refresh Interval</strong><p style="font-size:11px;color:var(--muted)">Live sync polling interval</p></div>
+          <select class="inline-select" id="refreshInterval" onchange="setRefreshInterval(+this.value)"><option value="30">30 sec</option><option value="60" selected>60 sec</option><option value="120">2 min</option><option value="300">5 min</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title" style="margin-bottom:12px">Data Management</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:13px">Export All Data</strong><p style="font-size:11px;color:var(--muted)">Download current filtered dataset as CSV</p></div><button class="btn btn-outline btn-sm" onclick="exportCSV()">&#11015;&#65039; Export CSV</button></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:13px">Share Dashboard</strong><p style="font-size:11px;color:var(--muted)">Copy permanent team URL</p></div><button class="btn btn-primary btn-sm" onclick="openShareModal()">&#128279; Copy Link</button></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:13px">Clear Manual Entries</strong><p style="font-size:11px;color:var(--muted)">Remove defects added from this dashboard</p></div><button class="btn btn-danger btn-sm" onclick="clearAdded()">&#128465; Clear</button></div>
+      </div>
+    </div>
+    <div class="panel"><div class="panel-title" style="margin-bottom:8px">About</div><p style="font-size:12px;color:var(--muted);line-height:1.8">Fire Endorsement Defect Dashboard &bull; v3.0<br/>Products: 040100 Fire &bull; 040300 House Owner &bull; 040700 SmartHome &bull; 040800 Commercial Fire<br/>Built for Allianz QA Team &bull; Served via Apache Tomcat 11 on <strong>44.68.16.95:8080</strong></p></div>
+  </div>
+</div>
+
+</div><!-- /#main -->
+
+<!-- ═══ EDIT MODAL ═══ -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-hdr"><h2>&#9998; Edit Defect <span id="editModalId" style="font-size:12px;color:var(--muted);font-weight:400"></span></h2><button class="modal-close" onclick="closeEditModal()">&#215;</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Defect ID</label><input id="ef-id" readonly style="background:var(--surface2);color:var(--muted)"/></div>
+      <div class="form-group"><label>Product Code</label><select id="ef-product" onchange="syncSheetFromProduct('ef-product','ef-sheet')"><option>040100</option><option>040300</option><option>040700</option><option>040800</option></select></div>
+      <div class="form-group"><label>Source Sheet</label><select id="ef-sheet"><option>Fire_040100</option><option>House Owner_040300</option><option>SmartHome Cover- 040700</option><option>Commercial Fire_040800</option></select></div>
+      <div class="form-group"><label>Endt Code</label><input id="ef-endt"/></div>
+      <div class="form-group"><label>Screen Name</label><input id="ef-screen" list="screenSuggestions"/></div>
+      <div class="form-group"><label>Priority</label><select id="ef-priority"><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select></div>
+      <div class="form-group"><label>Status</label><select id="ef-status"><option>Open</option><option>In Progress</option><option>Fixed</option><option>Not Fixed</option><option>Ready for Test</option><option>Closed</option></select></div>
+      <div class="form-group"><label>Defect Type</label><select id="ef-type"><option>Functional</option><option>Enable/Disable</option><option>Backend/API</option><option>UI/UX &amp; Labels</option><option>Other</option></select></div>
+      <div class="form-group"><label>Tester</label><input id="ef-tester" list="testerSuggestions"/></div>
+      <div class="form-group"><label>Dev Assignee</label><input id="ef-assignee" list="assigneeSuggestions"/></div>
+      <div class="form-group"><label>OPUS Reference</label><input id="ef-opus"/></div>
+      <div class="form-group"><label>Legacy Reference</label><input id="ef-legacy"/></div>
+      <div class="form-group full"><label>Description</label><textarea id="ef-desc"></textarea></div>
+      <div class="form-group full"><label>Comments</label><textarea id="ef-comments"></textarea></div>
+      <div class="form-group full"><label>Test Data</label><textarea id="ef-testdata" style="min-height:52px"></textarea></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <button class="btn btn-primary" onclick="saveEdit()">&#128190; Save Changes</button>
+      <button class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+      <button class="btn btn-amber btn-sm" onclick="markAsRFT()" style="margin-left:auto">&#128269; Mark RFT</button>
+      <button class="btn btn-danger" onclick="deleteDefect()">&#128465; Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DEFECT DETAIL MODAL ═══ -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" style="max-width:660px">
+    <div class="modal-hdr"><h2>&#128203; Defect Detail</h2><button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('show')">&#215;</button></div>
+    <div id="detailBody"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('detailModal').classList.remove('show');openEdit(currentDetailId)">&#9998; Edit</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('detailModal').classList.remove('show')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SHARE MODAL ═══ -->
 <div class="modal-overlay" id="shareModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeShareModal()">&#215;</button>
-    <h2>&#128279; Share Dashboard</h2>
-    <div class="info-box info-blue" style="margin-bottom:14px">Share this permanent URL with your Allianz team:</div>
-    <div style="display:flex;gap:8px;margin-bottom:16px">
-      <input class="url-input" id="shareUrl" value="https://itskiranbabu3.github.io/Opus-Defect-Dashboard/" readonly style="margin-top:0"/>
-      <button class="btn btn-primary" onclick="copyShareUrl()">&#128203; Copy</button>
+  <div class="modal" style="max-width:500px">
+    <div class="modal-hdr"><h2>&#128279; Share Dashboard</h2><button class="modal-close" onclick="document.getElementById('shareModal').classList.remove('show')">&#215;</button></div>
+    <div class="info-box ib-blue" style="margin-bottom:12px">Permanent team URL (served from Tomcat):</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <input id="shareUrl" value="http://44.68.16.95:8080/defect-dashboard/" style="flex:1;border:1px solid var(--border);border-radius:var(--radius-xs);padding:7px 10px;font-size:12px;background:var(--surface2);color:var(--text);outline:none" readonly/>
+      <button class="btn btn-primary" onclick="copyShare()">&#128203; Copy</button>
     </div>
-    <div class="info-box info-amber">
-      <strong>How team members use it:</strong><br/>
-      1. Open the URL in any browser<br/>
-      2. Go to <strong>Data Source</strong> &rarr; upload the latest Excel file<br/>
-      3. Dashboard auto-populates with real data instantly
-    </div>
+    <div class="info-box ib-amber"><strong>Team members:</strong><br/>1. Open the URL above<br/>2. Go to <strong>Data Source</strong> &rarr; pick or upload the Excel file<br/>3. Dashboard loads instantly &mdash; no login needed</div>
   </div>
 </div>
 
 <div id="toast"></div>
 
-<script>
-var allDefects=[],filtered=[],sortCol='id',sortDir=1,page=1,pageSize=20,charts={},autoTimer=null,autoURL='';
 
+<script>
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+var allDefects=[], filtered=[], addedDefects=[], selectedIds=new Set();
+var sortCol='defectID', sortDir=1, page=1, pageSize=20;
+var charts={};
+var liveFileHandle=null, liveTimer=null, liveLastMod=0, liveIntervalSec=60;
+var editingId=null, currentDetailId=null;
+var activityLog=[];
+var productFilter=''; // for product drilldown
+
+// ══════════════════════════════════════════════════
+// COLUMN ALIASES
+// ══════════════════════════════════════════════════
 var ALIASES={
-  id:['id','no','#','sr','sno','s.no','defect id','defect no','bug id','issue id'],
-  product:['product','prod','product code','prod code','productcode'],
-  endtCode:['endt code','endorsement code','endt','endtcode','endorsement','endt. code'],
-  screenName:['screen','screen name','module','page','feature','screenname','screen / module'],
-  description:['description','desc','defect','issue','summary','defect description','bug','defect summary'],
-  comments:['comments','comment','notes','note','remarks','remark','observation','comment / remarks'],
-  priority:['priority','severity','sev','prio','defect priority'],
-  status:['status','state','defect status','bug status','current status'],
-  tester:['tester','qa','tested by','qa engineer','testedby','qa name','test engineer'],
-  devAssignee:['dev assignee','developer','assignee','assigned to','dev','devassignee','dev name','assigned developer','fixed by']
-  ,eta:['eta','due date','target date','target','deadline','due','close date','expected date','fix date']
+  defectID:   ['defectid','defect id','id','no','#','sr','sno','s.no','bug id','issue id'],
+  product:    ['product','prod','product name','productname'],
+  endtCode:   ['endt code','endorsement code','endt','endtcode','endt. code','endt_code'],
+  screenName: ['screen name','screen','screenname','module','page','feature','screen / module'],
+  description:['description','desc','defect','issue','summary','defect description','bug'],
+  comments:   ['comments','comment','notes','note','remarks','remark','observation'],
+  priority:   ['priority','severity','sev','prio'],
+  status:     ['status','state','defect status'],
+  tester:     ['tester','qa','tested by','qa engineer','testedby'],
+  testData:   ['test data','testdata','test case','tc'],
+  devAssignee:['dev assignee','developer','assignee','assigned to','dev','devassignee','fixed by'],
+  notes:      ['notes','internal notes'],
+  opusRef:    ['opus reference no','opus ref','opus reference','opusm','opus no'],
+  legacyRef:  ['legacy reference no','legacy ref','legacy reference','legacy no'],
+  sourceSheet:['sourcesheet','source sheet','sheet','tab'],
+  productCode:['productcode6','product code','productcode','prod code'],
+  productName:['productname','product name','prod name','name'],
+  defectType: ['defecttype','defect type','type','category','issue type']
 };
 
+var PRODUCT_INFO={
+  '040100':{name:'Fire',sheet:'Fire_040100',color:'#dc2626'},
+  '040300':{name:'House Owner',sheet:'House Owner_040300',color:'#2563eb'},
+  '040700':{name:'SmartHome Cover',sheet:'SmartHome Cover- 040700',color:'#7c3aed'},
+  '040800':{name:'Commercial Fire',sheet:'Commercial Fire_040800',color:'#16a34a'}
+};
+var STAT_COLORS={'Open':'#dc2626','Fixed':'#16a34a','Not Fixed':'#ea580c','Ready for Test':'#d97706','Closed':'#2563eb','In Progress':'#0891b2'};
+var PRI_COLORS={'P1':'#dc2626','P2':'#ea580c','P3':'#d97706','P4':'#94a3b8'};
+var PALETTE=['#2563eb','#dc2626','#16a34a','#d97706','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#9333ea'];
+
+// ══════════════════════════════════════════════════
+// EXCEL PARSE
+// ══════════════════════════════════════════════════
 function fuzzyMap(headers){
   var map={};
   headers.forEach(function(h,i){
-    var hl=(h||'').toString().toLowerCase().trim().replace(/[_\-\.]/g,' ');
+    var hl=(h||'').toString().toLowerCase().trim().replace(/[\s_\-\.]+/g,' ');
     Object.keys(ALIASES).forEach(function(f){
       if(map[f]!=null)return;
       if(ALIASES[f].indexOf(hl)!==-1)map[f]=i;
@@ -332,228 +715,1008 @@ function fuzzyMap(headers){
     var hl=(h||'').toString().toLowerCase().trim();
     Object.keys(ALIASES).forEach(function(f){
       if(map[f]!=null)return;
-      ALIASES[f].forEach(function(a){if(map[f]!=null)return;if(hl.indexOf(a)!==-1||a.indexOf(hl)!==-1)map[f]=i;});
+      ALIASES[f].forEach(function(a){
+        if(map[f]!=null)return;
+        if(hl.length>2&&(hl.indexOf(a)!==-1||a.indexOf(hl)!==-1))map[f]=i;
+      });
     });
   });
   return map;
 }
 
 function parseBuffer(buf){
-  var wb=XLSX.read(new Uint8Array(buf),{type:'array',cellDates:true});
-  var ws=wb.Sheets[wb.SheetNames[0]];
-  var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-  if(rows.length<2)return[];
-  var hdrIdx=0;
-  for(var i=0;i<Math.min(5,rows.length);i++){if(rows[i].filter(function(c){return c!=='';}).length>=3){hdrIdx=i;break;}}
-  var headers=rows[hdrIdx].map(function(c){return(c||'').toString();});
-  var map=fuzzyMap(headers);
-  var result=[];
-  for(var r=hdrIdx+1;r<rows.length;r++){
-    var row=rows[r];
-    if(row.every(function(c){return c==='';}))continue;
-    function g(f){return map[f]!=null?(row[map[f]]||''):''}
-    var eta=g('eta');
-    if(eta instanceof Date)eta=eta.toISOString().slice(0,10);
-    result.push({id:r-hdrIdx,product:String(g('product')).trim(),endtCode:String(g('endtCode')).trim(),screenName:String(g('screenName')).trim(),description:String(g('description')).trim(),comments:String(g('comments')).trim(),priority:normP(String(g('priority')).trim()),status:normS(String(g('status')).trim()),tester:String(g('tester')).trim(),devAssignee:String(g('devAssignee')).trim(),eta:String(eta).trim()});
-  }
-  return result;
+  var wb=XLSX.read(new Uint8Array(buf),{type:'array',cellDates:true,cellNF:false,cellHTML:false});
+  var allData=[];
+  var priority=['RawData','Sheet1','Data'];
+  var sheets=[];
+  priority.forEach(function(s){if(wb.SheetNames.indexOf(s)!==-1)sheets.push(s);});
+  if(!sheets.length) sheets=[wb.SheetNames[0]];
+  wb.SheetNames.forEach(function(s){
+    if(sheets.indexOf(s)===-1&&!/^(Summary|Dashboard|Charts|Summary_|Pivot)/i.test(s)) sheets.push(s);
+  });
+  sheets.forEach(function(sheetName){
+    var ws=wb.Sheets[sheetName]; if(!ws)return;
+    var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
+    if(rows.length<2)return;
+    var hdrIdx=0;
+    for(var i=0;i<Math.min(6,rows.length);i++){
+      if(rows[i].filter(function(c){return(c||'').toString().trim()!=='';}).length>=4){hdrIdx=i;break;}
+    }
+    var headers=rows[hdrIdx].map(function(c){return(c||'').toString();});
+    var map=fuzzyMap(headers);
+    if(map.description==null&&map.defectID==null)return;
+    for(var r=hdrIdx+1;r<rows.length;r++){
+      var row=rows[r];
+      if(row.every(function(c){return(c||'').toString().trim()=='';}))continue;
+      function g(f){return map[f]!=null?(row[map[f]]||'').toString().trim():'';}
+      var d={
+        _row:r,_sheet:sheetName,
+        defectID:   g('defectID')||('D'+(allData.length+1).toString().padStart(4,'0')),
+        product:    g('product'),
+        endtCode:   g('endtCode'),
+        screenName: g('screenName'),
+        description:g('description'),
+        comments:   g('comments'),
+        priority:   normP(g('priority')),
+        status:     normS(g('status')),
+        tester:     g('tester'),
+        testData:   g('testData'),
+        devAssignee:g('devAssignee'),
+        notes:      g('notes'),
+        opusRef:    g('opusRef'),
+        legacyRef:  g('legacyRef'),
+        sourceSheet:g('sourceSheet')||sheetName,
+        productCode:g('productCode'),
+        productName:g('productName'),
+        defectType: normDT(g('defectType')),
+        _added:false
+      };
+      if(!d.description&&!d.defectID.startsWith('D'))continue;
+      allData.push(d);
+    }
+  });
+  return allData;
 }
 
-function normP(v){var u=v.toUpperCase();if(u==='P1'||u==='1'||u==='CRITICAL'||u==='BLOCKER')return'P1';if(u==='P2'||u==='2'||u==='HIGH')return'P2';if(u==='P3'||u==='3'||u==='MEDIUM'||u==='MODERATE')return'P3';if(u==='P4'||u==='4'||u==='LOW')return'P4';return v||'P3';}
-function normS(v){var u=v.toUpperCase();if(u===''||u==='OPEN'||u==='NEW'||u==='REOPENED')return'Open';if(u==='FIXED'||u==='RESOLVED')return'Fixed';if(u==='CLOSED'||u==='DONE'||u==='VERIFIED')return'Closed';if(u==='IN PROGRESS'||u==='IN-PROGRESS'||u==='INPROGRESS'||u==='WIP'||u==='FIXING')return'In Progress';if(u==='NOT FIXED'||u==='NOT-FIXED'||u==='NOTFIXED'||u==='WONTFIX')return'Not Fixed';if(u==='RFT'||u==='READY FOR TEST'||u==='READY FOR TESTING')return'RFT';return v||'Open';}
+function normP(v){var u=(v||'').toUpperCase().trim();if(u==='P1'||u==='1'||u==='CRITICAL'||u==='BLOCKER')return'P1';if(u==='P2'||u==='2'||u==='HIGH')return'P2';if(u==='P3'||u==='3'||u==='MEDIUM')return'P3';if(u==='P4'||u==='4'||u==='LOW')return'P4';return v||'P3';}
+function normS(v){var u=(v||'').toUpperCase().trim().replace(/[\-_]+/g,' ');if(!u||u==='OPEN'||u==='NEW'||u==='REOPEN'||u==='REOPENED')return'Open';if(u==='FIXED'||u==='RESOLVED')return'Fixed';if(u==='CLOSED'||u==='DONE'||u==='VERIFIED')return'Closed';if(u==='IN PROGRESS'||u==='INPROGRESS'||u==='WIP'||u==='FIXING')return'In Progress';if(u==='NOT FIXED'||u==='NOTFIXED'||u==='WONTFIX'||u==='NOT FIX')return'Not Fixed';if(u==='READY FOR TEST'||u==='RFT'||u==='READY TO TEST'||u==='READY FOR TESTING')return'Ready for Test';return v||'Open';}
+function normDT(v){var u=(v||'').toLowerCase().trim();if(!u)return'Functional';if(u.indexOf('backend')!==-1||u.indexOf('api')!==-1||u==='be')return'Backend/API';if(u.indexOf('ui')!==-1||u.indexOf('ux')!==-1||u.indexOf('label')!==-1)return'UI/UX & Labels';if(u.indexOf('enable')!==-1||u.indexOf('disable')!==-1)return'Enable/Disable';if(u.indexOf('functional')!==-1)return'Functional';return v||'Functional';}
 
 function loadData(data){
-  allDefects=data;filtered=data;
-  buildFilters();applyFilter();updateKPIs();renderCharts();renderInsights();
+  var ids=new Set(data.map(function(d){return d.defectID;}));
+  var kept=addedDefects.filter(function(d){return!ids.has(d.defectID);});
+  allDefects=data.concat(kept);
+  filtered=allDefects.slice();
+  selectedIds.clear();
+  buildFilters();
+  buildSuggestions();
+  applyFilter();
+  updateKPIs();
+  renderCharts();
+  renderInsights();
+  renderProducts();
+  renderRFTPanel();
+  renderActivityFeed();
+  renderAssignPage();
+  updateNavBadges();
   var now=new Date().toLocaleTimeString();
-  document.getElementById('lastRefresh').textContent=data.length+' defects loaded — updated '+now;
-  document.getElementById('defectCount').textContent=data.length+' defects';
-  toast('Loaded '+data.length+' defects',3000);
+  document.getElementById('lastRefresh').textContent=allDefects.length+' defects across '+productList().length+' products — last updated '+now;
+  toast(allDefects.length+' defects loaded','success');
 }
 
+function productList(){return[...new Set(allDefects.map(function(d){return d.productCode||d.product;}).filter(Boolean))];}
+
+// ══════════════════════════════════════════════════
+// ACTIVITY LOG
+// ══════════════════════════════════════════════════
+function logActivity(msg,type){
+  activityLog.unshift({msg:msg,type:type||'info',time:new Date()});
+  if(activityLog.length>200)activityLog.pop();
+  renderActivityFeed();
+}
+function actFeedItem(a){
+  var colors={success:'#16a34a',error:'#dc2626',warn:'#d97706',info:'#2563eb'};
+  var t=a.time instanceof Date?a.time:new Date(a.time);
+  var ts=t.toLocaleTimeString()+' '+t.toLocaleDateString();
+  return'<div class="activity-item"><div class="activity-dot" style="background:'+(colors[a.type]||'#64748b')+'"></div><div class="activity-body">'+esc(a.msg)+'</div><div class="activity-time">'+ts+'</div></div>';
+}
+function renderActivityFeed(){
+  var el=document.getElementById('activityFeed');if(!el)return;
+  if(!activityLog.length){el.innerHTML='<p style="color:var(--muted);font-size:12px;padding:8px 0">No activity yet — load data to begin</p>';return;}
+  el.innerHTML=activityLog.slice(0,12).map(actFeedItem).join('');
+}
+
+// ══════════════════════════════════════════════════
+// KPIs
+// ══════════════════════════════════════════════════
+function updateKPIs(){
+  var d=allDefects,n=d.length||1;
+  var open=d.filter(function(x){return x.status==='Open';}).length;
+  var fixed=d.filter(function(x){return x.status==='Fixed';}).length;
+  var rft=d.filter(function(x){return x.status==='Ready for Test';}).length;
+  var nf=d.filter(function(x){return x.status==='Not Fixed';}).length;
+  var p1=d.filter(function(x){return x.priority==='P1';}).length;
+  var be=d.filter(function(x){return x.defectType==='Backend/API';}).length;
+  var func=d.filter(function(x){return x.defectType==='Enable/Disable';}).length;
+  function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+  function setW(id,p){var el=document.getElementById(id);if(el)el.style.width=p+'%';}
+  set('k-total',d.length);set('k-open',open);set('k-fixed',fixed);set('k-rft',rft);
+  set('k-notfixed',nf);set('k-p1',p1);set('k-be',be);set('k-func',func);
+  setW('kb-open',Math.round(open/n*100));setW('kb-fixed',Math.round(fixed/n*100));
+  setW('kb-rft',Math.round(rft/n*100));setW('kb-notfixed',Math.round(nf/n*100));
+  setW('kb-p1',Math.round(p1/n*100));setW('kb-be',Math.round(be/n*100));setW('kb-func',Math.round(func/n*100));
+  set('kt-open',Math.round(open/n*100)+'%');set('kt-fixed',Math.round(fixed/n*100)+'%');set('kt-rft',Math.round(rft/n*100)+'%');
+}
+function updateNavBadges(){
+  var open=allDefects.filter(function(x){return x.status==='Open';}).length;
+  var nb=document.getElementById('nb-open');if(nb)nb.textContent=open;
+}
+
+// ══════════════════════════════════════════════════
+// FILTERS
+// ══════════════════════════════════════════════════
 function buildFilters(){
   function pop(id,field){
-    var sel=document.getElementById(id),cur=sel.value;
+    var sel=document.getElementById(id);if(!sel)return;
+    var cur=sel.value;
     var vals=[...new Set(allDefects.map(function(d){return d[field];}).filter(Boolean))].sort();
     sel.innerHTML='<option value="">All</option>'+vals.map(function(v){return'<option value="'+esc(v)+'">'+esc(v)+'</option>';}).join('');
     if(vals.indexOf(cur)!==-1)sel.value=cur;
   }
-  pop('f-product','product');pop('f-status','status');pop('f-priority','priority');pop('f-assignee','devAssignee');pop('f-tester','tester');
+  pop('f-product','productCode');pop('f-sheet','sourceSheet');pop('f-status','status');
+  pop('f-priority','priority');pop('f-type','defectType');
+  pop('f-tester','tester');pop('f-assignee','devAssignee');
+  // Bulk reassign dropdown
+  var ba=document.getElementById('bulkAssigneeSel');
+  if(ba){
+    var cur=ba.value;
+    var assignees=[...new Set(allDefects.map(function(d){return d.devAssignee;}).filter(Boolean))].sort();
+    ba.innerHTML='<option value="">Reassign to...</option>'+assignees.map(function(a){return'<option>'+esc(a)+'</option>';}).join('');
+    if(assignees.indexOf(cur)!==-1)ba.value=cur;
+  }
+}
+function buildSuggestions(){
+  function fill(id,field){
+    var dl=document.getElementById(id);if(!dl)return;
+    var vals=[...new Set(allDefects.map(function(d){return d[field];}).filter(Boolean))].sort();
+    dl.innerHTML=vals.map(function(v){return'<option value="'+esc(v)+'"/>';}).join('');
+  }
+  fill('screenSuggestions','screenName');
+  fill('testerSuggestions','tester');
+  fill('assigneeSuggestions','devAssignee');
 }
 
 function applyFilter(){
-  var fp=document.getElementById('f-product').value,fs=document.getElementById('f-status').value,fpr=document.getElementById('f-priority').value,fa=document.getElementById('f-assignee').value,ft=document.getElementById('f-tester').value,fq=document.getElementById('f-search').value.toLowerCase();
+  var fp=v('f-product'),fs=v('f-status'),fpr=v('f-priority'),fa=v('f-assignee'),
+      ft=v('f-tester'),fty=v('f-type'),fsh=v('f-sheet'),fq=(v('f-search')||'').toLowerCase();
+  // For product page drilldown
+  var pf=productFilter;
   filtered=allDefects.filter(function(d){
-    if(fp&&d.product!==fp)return false;if(fs&&d.status!==fs)return false;if(fpr&&d.priority!==fpr)return false;if(fa&&d.devAssignee!==fa)return false;if(ft&&d.tester!==ft)return false;
-    if(fq&&d.description.toLowerCase().indexOf(fq)===-1&&d.screenName.toLowerCase().indexOf(fq)===-1&&d.comments.toLowerCase().indexOf(fq)===-1)return false;
+    if(pf&&(d.productCode||d.product)!==pf)return false;
+    if(fp&&(d.productCode||d.product)!==fp)return false;
+    if(fsh&&d.sourceSheet!==fsh)return false;
+    if(fs&&d.status!==fs)return false;
+    if(fpr&&d.priority!==fpr)return false;
+    if(fa&&d.devAssignee!==fa)return false;
+    if(ft&&d.tester!==ft)return false;
+    if(fty&&d.defectType!==fty)return false;
+    if(fq){var hay=(d.description+' '+d.screenName+' '+d.comments+' '+d.defectID+' '+d.opusRef+' '+d.endtCode+' '+d.tester+' '+d.devAssignee).toLowerCase();if(hay.indexOf(fq)===-1)return false;}
     return true;
   });
   page=1;renderTable();
-  document.getElementById('defectCount').textContent=filtered.length+' of '+allDefects.length+' defects';
+  var el=document.getElementById('defectCountLabel');
+  if(el)el.textContent=filtered.length+' of '+allDefects.length+' defects';
 }
+function clearFilters(){
+  ['f-product','f-sheet','f-status','f-priority','f-type','f-tester','f-assignee'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var fs=document.getElementById('f-search');if(fs)fs.value='';
+  productFilter='';
+  applyFilter();
+}
+function filterByStatus(s){clearFilters();if(s){var el=document.getElementById('f-status');if(el)el.value=s;}applyFilter();nav('defects');}
+function filterByPriority(p){clearFilters();var el=document.getElementById('f-priority');if(el)el.value=p;applyFilter();nav('defects');}
+function filterByType(t){clearFilters();var el=document.getElementById('f-type');if(el)el.value=t;applyFilter();nav('defects');}
+function filterByProduct(pc){clearFilters();var el=document.getElementById('f-product');if(el)el.value=pc;applyFilter();nav('defects');}
 
-function sortBy(col){if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}applyFilter();}
+// ══════════════════════════════════════════════════
+// TABLE + SELECTION
+// ══════════════════════════════════════════════════
+function sortBy(col){
+  if(sortCol===col)sortDir*=-1; else{sortCol=col;sortDir=1;}
+  applyFilter();
+}
+function totalPages(){return Math.ceil(filtered.length/pageSize)||1;}
+function changePage(d){page=Math.max(1,Math.min(totalPages(),page+d));renderTable();}
 
 function renderTable(){
-  var sorted=filtered.slice().sort(function(a,b){var av=a[sortCol]||'',bv=b[sortCol]||'';if(typeof av==='number')return(av-bv)*sortDir;return av.toString().localeCompare(bv.toString())*sortDir;});
-  var total=sorted.length,start=(page-1)*pageSize,rows=sorted.slice(start,start+pageSize);
-  var tbody=document.getElementById('tblBody');
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">No defects match filters</td></tr>';}
-  else{tbody.innerHTML=rows.map(function(d){return'<tr class="'+(d.priority==='P1'?'row-p1':'')+'"><td>'+d.id+'</td><td><strong>'+esc(d.product)+'</strong></td><td>'+esc(d.endtCode)+'</td><td>'+esc(d.screenName)+'</td><td class="td-desc" title="'+esc(d.description)+'">'+esc(d.description)+'</td><td>'+priBadge(d.priority)+'</td><td>'+statusBadge(d.status)+'</td><td>'+esc(d.tester)+'</td><td>'+esc(d.devAssignee)+'</td><td>'+esc(d.eta)+'</td></tr>';}).join('');}
-  var pages=Math.ceil(total/pageSize)||1;
-  document.getElementById('pagInfo').textContent='Page '+page+' of '+pages+' ('+total+' rows)';
-  document.getElementById('btnPrev').disabled=page<=1;document.getElementById('btnNext').disabled=page>=pages;
+  var sorted=filtered.slice().sort(function(a,b){
+    var av=a[sortCol]||'',bv=b[sortCol]||'';
+    if(sortCol==='priority'){var pm={P1:1,P2:2,P3:3,P4:4};return sortDir*((pm[av]||5)-(pm[bv]||5));}
+    return sortDir*av.toString().localeCompare(bv.toString());
+  });
+  var tp=totalPages(),start=(page-1)*pageSize,rows=sorted.slice(start,start+pageSize);
+  var tbody=document.getElementById('tblBody');if(!tbody)return;
+  if(!rows.length){
+    tbody.innerHTML='<tr><td colspan="14" style="text-align:center;padding:40px;color:var(--muted)">No defects match the current filters</td></tr>';
+  } else {
+    tbody.innerHTML=rows.map(function(d){
+      var pc=d.productCode||d.product||'';
+      var sel=selectedIds.has(d.defectID);
+      return '<tr class="'+(sel?'selected-row':'')+'" style="'+(d._added?'border-left:3px solid var(--brand)':'')+'">'+
+        '<td><input type="checkbox" '+(sel?'checked':'')+' onchange="toggleSelect(\''+esc(d.defectID)+'\',this.checked)"></td>'+
+        '<td class="td-id" onclick="openDetail(\''+esc(d.defectID)+'\')" title="Click to view details">'+esc(d.defectID)+'</td>'+
+        '<td><span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--brand-light);color:var(--brand)">'+esc(pc)+'</span></td>'+
+        '<td style="font-size:11px;color:var(--muted)" class="td-truncate" title="'+esc(d.sourceSheet)+'">'+esc(d.sourceSheet)+'</td>'+
+        '<td style="font-size:11px" class="td-truncate" title="'+esc(d.endtCode)+'">'+esc(d.endtCode)+'</td>'+
+        '<td class="td-truncate" title="'+esc(d.screenName)+'">'+esc(d.screenName)+'</td>'+
+        '<td class="td-truncate" title="'+esc(d.description)+'">'+esc(d.description)+'</td>'+
+        '<td>'+dtBadge(d.defectType)+'</td>'+
+        '<td>'+priBadge(d.priority)+'</td>'+
+        '<td class="editable-cell" onclick="quickStatusEdit(this,\''+esc(d.defectID)+'\')" title="Click to change status">'+statusBadge(d.status)+'</td>'+
+        '<td style="font-size:11px">'+esc(d.tester)+'</td>'+
+        '<td class="editable-cell td-truncate" onclick="quickAssignEdit(this,\''+esc(d.defectID)+'\')" title="'+esc(d.devAssignee)+'&#10;Click to reassign" style="font-size:11px">'+esc(d.devAssignee||'—')+'</td>'+
+        '<td style="font-size:11px"><span style="color:var(--brand);cursor:pointer" onclick="openDetail(\''+esc(d.defectID)+'\')" title="'+esc(d.opusRef)+'">'+esc(d.opusRef?d.opusRef.substring(0,14):'')+'</span></td>'+
+        '<td style="white-space:nowrap;display:flex;gap:3px;padding:5px 8px">'+
+          '<button class="btn btn-ghost btn-xs" onclick="openEdit(\''+esc(d.defectID)+'\')" title="Edit">&#9998;</button>'+
+          '<button class="btn btn-ghost btn-xs" onclick="duplicateDefect(\''+esc(d.defectID)+'\')" title="Duplicate">&#128203;</button>'+
+          '<button class="btn btn-ghost btn-xs" style="color:#dc2626" onclick="quickDelete(\''+esc(d.defectID)+'\')" title="Delete">&#128465;</button>'+
+        '</td>'+
+      '</tr>';
+    }).join('');
+  }
+  // Pagination
+  document.getElementById('pagInfo').textContent='Showing '+(filtered.length?Math.min(start+1,filtered.length):0)+'-'+Math.min(start+pageSize,filtered.length)+' of '+filtered.length;
+  var numEl=document.getElementById('pageNums');
+  if(numEl){
+    var lo=Math.max(1,page-2),hi=Math.min(tp,page+2);
+    var nums=[];for(var i=lo;i<=hi;i++)nums.push(i);
+    numEl.innerHTML=nums.map(function(p){return'<button class="pag-btn'+(p===page?' active':'')+'" onclick="page='+p+';renderTable()">'+p+'</button>';}).join('');
+  }
+  var bp=document.getElementById('btnPrev'),bn=document.getElementById('btnNext');
+  if(bp)bp.disabled=page<=1;if(bn)bn.disabled=page>=tp;
+  // Sync select-all
+  var ca=document.getElementById('chkAll');if(ca)ca.checked=rows.length&&rows.every(function(d){return selectedIds.has(d.defectID);});
 }
-function changePage(dir){page+=dir;renderTable();}
-function statusBadge(s){var m={'Open':'b-open','Fixed':'b-fixed','Closed':'b-done','Not Fixed':'b-notfixed','RFT':'b-rft','In Progress':'b-inprog'};return'<span class="badge '+(m[s]||'b-unknown')+'">'+esc(s)+'</span>';}
-function priBadge(p){var m={'P1':'b-p1','P2':'b-p2','P3':'b-p3','P4':'b-p4'};return'<span class="badge '+(m[p]||'b-unknown')+'">'+esc(p)+'</span>';}
 
-function updateKPIs(){
-  var d=allDefects;
-  document.getElementById('k-total').textContent=d.length;
-  document.getElementById('k-open').textContent=d.filter(function(x){return x.status==='Open';}).length;
-  document.getElementById('k-fixed').textContent=d.filter(function(x){return x.status==='Fixed'||x.status==='Closed';}).length;
-  document.getElementById('k-p1').textContent=d.filter(function(x){return x.priority==='P1';}).length;
-  document.getElementById('k-p2').textContent=d.filter(function(x){return x.priority==='P2';}).length;
-  document.getElementById('k-inprog').textContent=d.filter(function(x){return x.status==='In Progress';}).length;
-  document.getElementById('k-products').textContent=new Set(d.map(function(x){return x.product;}).filter(Boolean)).size;
-  document.getElementById('k-screens').textContent=new Set(d.map(function(x){return x.screenName;}).filter(Boolean)).size;
+// ══════════════════════════════════════════════════
+// SELECTION & BULK OPS
+// ══════════════════════════════════════════════════
+function toggleSelect(id,checked){
+  if(checked)selectedIds.add(id); else selectedIds.delete(id);
+  updateBulkBar();
+}
+function toggleSelectAll(checked){
+  var sorted=filtered.slice().sort(function(a,b){return sortDir*((a[sortCol]||'').toString().localeCompare((b[sortCol]||'').toString()));});
+  var start=(page-1)*pageSize;
+  sorted.slice(start,start+pageSize).forEach(function(d){if(checked)selectedIds.add(d.defectID);else selectedIds.delete(d.defectID);});
+  updateBulkBar();
+  renderTable();
+}
+function updateBulkBar(){
+  var bar=document.getElementById('bulkBar'),cnt=document.getElementById('bulkCount');
+  if(bar)bar.classList.toggle('show',selectedIds.size>0);
+  if(cnt)cnt.textContent=selectedIds.size+' selected';
+}
+function clearSelection(){selectedIds.clear();updateBulkBar();renderTable();}
+function bulkSetStatus(){
+  var s=v('bulkStatusSel');if(!s){toast('Select a status first','warn');return;}
+  selectedIds.forEach(function(id){var d=allDefects.find(function(x){return x.defectID===id;});if(d){d.status=s;}});
+  logActivity('Bulk status update: '+selectedIds.size+' defects → '+s,'success');
+  applyFilter();updateKPIs();renderCharts();renderInsights();renderRFTPanel();updateNavBadges();
+  toast('Updated '+selectedIds.size+' defects to '+s,'success');
+  clearSelection();
+}
+function bulkReassign(){
+  var a=v('bulkAssigneeSel');if(!a){toast('Select an assignee first','warn');return;}
+  selectedIds.forEach(function(id){var d=allDefects.find(function(x){return x.defectID===id;});if(d){d.devAssignee=a;}});
+  logActivity('Bulk reassign: '+selectedIds.size+' defects → '+a,'success');
+  applyFilter();renderAssignPage();
+  toast('Reassigned '+selectedIds.size+' defects to '+a,'success');
+  clearSelection();
+}
+function bulkDelete(){
+  if(!selectedIds.size)return;
+  if(!confirm('Delete '+selectedIds.size+' selected defects? This cannot be undone.'))return;
+  var ids=new Set(selectedIds);
+  allDefects=allDefects.filter(function(d){return!ids.has(d.defectID);});
+  filtered=filtered.filter(function(d){return!ids.has(d.defectID);});
+  logActivity('Bulk delete: '+ids.size+' defects removed','warn');
+  clearSelection();
+  buildFilters();applyFilter();updateKPIs();renderCharts();renderInsights();updateNavBadges();
+  toast('Deleted '+ids.size+' defects','warn');
 }
 
+// ══════════════════════════════════════════════════
+// INLINE EDITS
+// ══════════════════════════════════════════════════
+function quickStatusEdit(cell,defectId){
+  var statuses=['Open','In Progress','Fixed','Not Fixed','Ready for Test','Closed'];
+  var d=allDefects.find(function(x){return x.defectID===defectId;});if(!d)return;
+  var old=d.status;
+  var sel=document.createElement('select');sel.className='inline-select';
+  statuses.forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;if(s===d.status)o.selected=true;sel.appendChild(o);});
+  cell.innerHTML='';cell.appendChild(sel);sel.focus();
+  sel.onchange=function(){
+    d.status=sel.value;
+    logActivity('Status changed: '+defectId+' — '+old+' → '+d.status,'info');
+    applyFilter();updateKPIs();renderCharts();renderInsights();renderRFTPanel();updateNavBadges();
+    toast('Status: '+defectId+' → '+d.status,'success');
+  };
+  sel.onblur=function(){renderTable();};
+}
+function quickAssignEdit(cell,defectId){
+  var d=allDefects.find(function(x){return x.defectID===defectId;});if(!d)return;
+  var old=d.devAssignee;
+  var assignees=[...new Set(allDefects.map(function(x){return x.devAssignee;}).filter(Boolean))].sort();
+  var sel=document.createElement('select');sel.className='inline-select';sel.style.minWidth='120px';
+  sel.innerHTML='<option value="">— Unassigned —</option>'+assignees.map(function(a){return'<option '+(a===d.devAssignee?'selected':'')+'>'+esc(a)+'</option>';}).join('');
+  // Add option for custom input
+  var customOpt=document.createElement('option');customOpt.value='__custom__';customOpt.textContent='+ Custom name...';sel.appendChild(customOpt);
+  cell.innerHTML='';cell.appendChild(sel);sel.focus();
+  sel.onchange=function(){
+    if(sel.value==='__custom__'){
+      var name=prompt('Enter assignee name:');
+      if(name&&name.trim()){d.devAssignee=name.trim();logActivity('Reassigned: '+defectId+' → '+d.devAssignee,'info');buildFilters();applyFilter();renderAssignPage();toast('Assigned: '+defectId+' → '+d.devAssignee,'success');}
+      else renderTable();return;
+    }
+    d.devAssignee=sel.value;
+    logActivity('Reassigned: '+defectId+' — '+old+' → '+d.devAssignee,'info');
+    buildFilters();applyFilter();renderAssignPage();
+    toast('Assigned: '+defectId+' → '+d.devAssignee,'success');
+  };
+  sel.onblur=function(){renderTable();};
+}
+
+function statusBadge(s){var m={'Open':'bs-open','Fixed':'bs-fixed','Not Fixed':'bs-notfixed','Ready for Test':'bs-rft','Closed':'bs-closed','In Progress':'bs-inprog'};return'<span class="badge '+(m[s]||'bs-unknown')+'">'+esc(s)+'</span>';}
+function priBadge(p){var m={'P1':'bp-p1','P2':'bp-p2','P3':'bp-p3','P4':'bp-p4'};return'<span class="badge '+(m[p]||'bs-unknown')+'">'+esc(p)+'</span>';}
+function dtBadge(t){var m={'Backend/API':'bdt-be','Functional':'bdt-func','UI/UX & Labels':'bdt-ui','Enable/Disable':'bdt-fe'};return'<span class="badge '+(m[t]||'bdt-other')+'">'+esc(t)+'</span>';}
+</script>
+
+
+<script>
+// ══════════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════════
 function groupBy(arr,key){var m={};arr.forEach(function(d){var k=d[key]||'Unknown';m[k]=(m[k]||0)+1;});return m;}
 function topN(obj,n){return Object.entries(obj).sort(function(a,b){return b[1]-a[1];}).slice(0,n);}
 
 function mkChart(id,type,labels,datasets,opts){
-  if(charts[id])charts[id].destroy();
+  if(charts[id]){try{charts[id].destroy();}catch(e){}}
   var ctx=document.getElementById(id);if(!ctx)return;
-  charts[id]=new Chart(ctx,{type:type,data:{labels:labels,datasets:datasets},options:Object.assign({responsive:true,plugins:{legend:{position:'right'}}},opts||{})});
+  charts[id]=new Chart(ctx,{type:type,data:{labels:labels,datasets:datasets},options:Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10,padding:8}}}},opts||{})});
 }
 
 function renderCharts(){
   if(!allDefects.length)return;
-  var COLORS=['#2563eb','#dc2626','#16a34a','#d97706','#7c3aed','#0891b2','#db2777','#65a30d','#9333ea','#f59e0b'];
-  var SC={'Open':'#dc2626','Fixed':'#16a34a','Closed':'#2563eb','In Progress':'#d97706','Not Fixed':'#ea580c','RFT':'#eab308'};
-  var PC={'P1':'#dc2626','P2':'#ea580c','P3':'#eab308','P4':'#94a3b8'};
-  var sg=groupBy(allDefects,'status');
-  mkChart('chartStatus','doughnut',Object.keys(sg),[{data:Object.values(sg),backgroundColor:Object.keys(sg).map(function(k){return SC[k]||'#94a3b8';}),borderWidth:2}],{plugins:{legend:{position:'right'}},cutout:'65%'});
-  var pg=groupBy(allDefects,'priority'),pO=['P1','P2','P3','P4'],pL=pO.filter(function(k){return pg[k];});
-  mkChart('chartPriority','bar',pL,[{data:pL.map(function(k){return pg[k]||0;}),backgroundColor:pL.map(function(k){return PC[k]||'#94a3b8';}),borderRadius:6}],{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}});
-  var prods=[...new Set(allDefects.map(function(d){return d.product;}).filter(Boolean))].slice(0,10);
-  var stats=[...new Set(allDefects.map(function(d){return d.status;}))];
-  mkChart('chartProduct','bar',prods,stats.map(function(s,i){return{label:s,data:prods.map(function(p){return allDefects.filter(function(d){return d.product===p&&d.status===s;}).length;}),backgroundColor:SC[s]||COLORS[i],borderRadius:3};}),{plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}});
-  var sc=topN(groupBy(allDefects,'screenName'),10);
-  mkChart('chartScreens','bar',sc.map(function(x){return x[0];}),[{data:sc.map(function(x){return x[1];}),backgroundColor:COLORS,borderRadius:6}],{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}});
+  var d=allDefects;
+  var sg=groupBy(d,'status');
+  mkChart('chartStatus','doughnut',Object.keys(sg),[{data:Object.values(sg),backgroundColor:Object.keys(sg).map(function(k){return STAT_COLORS[k]||'#94a3b8';}),borderWidth:2,hoverOffset:8}],{cutout:'62%'});
+  var pO=['P1','P2','P3','P4'],pg=groupBy(d,'priority'),pL=pO.filter(function(k){return pg[k];});
+  mkChart('chartPriority','bar',pL,[{data:pL.map(function(k){return pg[k]||0;}),backgroundColor:pL.map(function(k){return PRI_COLORS[k];}),borderRadius:7,borderSkipped:false}],{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(100,116,139,.1)'},ticks:{color:'#64748b',font:{size:10}}},x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}}}});
+  var prods=Object.keys(PRODUCT_INFO),statuses=Object.keys(STAT_COLORS);
+  var pDS=statuses.filter(function(s){return d.some(function(x){return x.status===s;});}).map(function(s){return{label:s,data:prods.map(function(p){return d.filter(function(x){return(x.productCode||x.product)===p&&x.status===s;}).length;}),backgroundColor:STAT_COLORS[s],borderRadius:3,borderSkipped:false};});
+  mkChart('chartProduct','bar',prods,pDS,{plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},y:{stacked:true,beginAtZero:true,grid:{color:'rgba(100,116,139,.1)'},ticks:{color:'#64748b',font:{size:10}}}}});
+  var tg=groupBy(d,'defectType');
+  mkChart('chartType','doughnut',Object.keys(tg),[{data:Object.values(tg),backgroundColor:['#7c3aed','#2563eb','#16a34a','#db2777','#ea580c'],borderWidth:2,hoverOffset:8}],{cutout:'55%'});
+  var sc=topN(groupBy(d,'screenName'),10);
+  renderBarList('topScreensList',sc,PALETTE[0]);
+  var ac=topN(groupBy(d,'devAssignee'),10).filter(function(x){return x[0]&&x[0]!=='Unknown'&&x[0]!=='';});
+  renderBarList('assigneeList',ac,'#7c3aed');
 }
 
+function renderBarList(id,items,color){
+  var el=document.getElementById(id);if(!el)return;
+  if(!items.length){el.innerHTML='<p style="color:var(--muted);font-size:12px">No data</p>';return;}
+  var max=items[0][1]||1;
+  el.innerHTML=items.map(function(x){return'<div class="prog-row"><div class="prog-label" title="'+esc(x[0])+'">'+esc(x[0])+'</div><div class="prog-count">'+x[1]+'</div><div class="prog-bar"><div class="prog-fill" style="width:'+Math.round(x[1]/max*100)+'%;background:'+color+'"></div></div></div>';}).join('');
+}
+
+// ══════════════════════════════════════════════════
+// RFT PANEL (Overview inline)
+// ══════════════════════════════════════════════════
+function renderRFTPanel(){
+  var rftList=allDefects.filter(function(d){return d.status==='Ready for Test';});
+  var el=document.getElementById('rftPanel');if(!el)return;
+  if(!rftList.length){el.innerHTML='<p style="color:var(--muted);font-size:12px;padding:8px 0">No defects ready for test</p>';return;}
+  el.innerHTML=rftList.slice(0,15).map(function(d){
+    var pc=d.productCode||d.product;
+    return'<div class="rft-item">'+
+      '<div class="rft-info">'+
+        '<div class="rft-desc" title="'+esc(d.description)+'">'+esc(d.defectID)+' — '+esc(d.screenName||d.description.substring(0,40))+'</div>'+
+        '<div class="rft-meta">'+esc(pc)+' &bull; '+esc(d.devAssignee||'Unassigned')+'</div>'+
+      '</div>'+
+      priBadge(d.priority)+
+      '<button class="btn btn-green btn-xs" onclick="markTested(\''+esc(d.defectID)+'\')" style="margin-left:6px;flex-shrink:0">&#10003; Test OK</button>'+
+    '</div>';
+  }).join('')+(rftList.length>15?'<div style="font-size:11px;color:var(--muted);padding-top:6px">+ '+(rftList.length-15)+' more — <span style="color:var(--brand);cursor:pointer" onclick="filterByStatus(\'Ready for Test\')">View all</span></div>':'');
+}
+
+function markTested(id){
+  var d=allDefects.find(function(x){return x.defectID===id;});
+  if(d){
+    d.status='Fixed';
+    logActivity('Marked tested (Fixed): '+id+' by '+d.tester,'success');
+    updateKPIs();renderRFTPanel();renderCharts();renderInsights();updateNavBadges();
+    toast('Marked Fixed: '+id,'success');
+  }
+}
+
+// ══════════════════════════════════════════════════
+// PRODUCTS PAGE
+// ══════════════════════════════════════════════════
+function renderProducts(){
+  var d=allDefects;
+  var prods=Object.keys(PRODUCT_INFO);
+  var pcEl=document.getElementById('productCards');if(!pcEl)return;
+  pcEl.innerHTML=prods.map(function(pc){
+    var info=PRODUCT_INFO[pc]||{name:pc,color:'#64748b'};
+    var pd=d.filter(function(x){return(x.productCode||x.product)===pc;});
+    var open=pd.filter(function(x){return x.status==='Open';}).length;
+    var fixed=pd.filter(function(x){return x.status==='Fixed';}).length;
+    var rft=pd.filter(function(x){return x.status==='Ready for Test';}).length;
+    var nf=pd.filter(function(x){return x.status==='Not Fixed';}).length;
+    return'<div class="product-card" onclick="showProductDrilldown(\''+pc+'\')" id="pc-'+pc+'">'+
+      '<div class="pc-code">'+pc+'</div>'+
+      '<div class="pc-name" style="color:'+info.color+'">'+info.name+'</div>'+
+      '<div class="pc-count">'+pd.length+' defects</div>'+
+      '<div class="stat-strip">'+
+        '<div class="stat-seg" style="flex:'+open+';background:#dc2626" title="Open: '+open+'"></div>'+
+        '<div class="stat-seg" style="flex:'+fixed+';background:#16a34a" title="Fixed: '+fixed+'"></div>'+
+        '<div class="stat-seg" style="flex:'+rft+';background:#d97706" title="RFT: '+rft+'"></div>'+
+        '<div class="stat-seg" style="flex:'+nf+';background:#ea580c" title="Not Fixed: '+nf+'"></div>'+
+        '<div class="stat-seg" style="flex:'+(pd.length-open-fixed-rft-nf)+';background:#94a3b8" title="Other"></div>'+
+      '</div>'+
+      '<div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap">'+
+        '<span class="badge bs-open">'+open+' Open</span>'+
+        '<span class="badge bs-fixed">'+fixed+' Fixed</span>'+
+        (rft?'<span class="badge bs-rft">'+rft+' RFT</span>':'')+
+        (nf?'<span class="badge bs-notfixed">'+nf+' Not Fixed</span>':'')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function showProductDrilldown(pc){
+  document.querySelectorAll('.product-card').forEach(function(c){c.classList.remove('active');});
+  var el=document.getElementById('pc-'+pc);if(el)el.classList.add('active');
+  var info=PRODUCT_INFO[pc]||{name:pc,color:'#2563eb'};
+  var pd=allDefects.filter(function(x){return(x.productCode||x.product)===pc;});
+  var dd=document.getElementById('productDrilldown');if(!dd)return;
+
+  var filtId='pd-f-status-'+pc, filtPriId='pd-f-pri-'+pc, filtTypeId='pd-f-type-'+pc, filtScrId='pd-f-screen-'+pc, filtAssId='pd-f-ass-'+pc, filtQId='pd-f-q-'+pc;
+  var tblId='pd-tbl-'+pc;
+
+  function getStatuses(){return[...new Set(pd.map(function(d){return d.status;}).filter(Boolean))].sort();}
+  function getScreens(){return[...new Set(pd.map(function(d){return d.screenName;}).filter(Boolean))].sort();}
+  function getAssignees(){return[...new Set(pd.map(function(d){return d.devAssignee;}).filter(Boolean))].sort();}
+
+  dd.innerHTML='<div class="panel" style="margin-bottom:14px">'+
+    '<div class="panel-hdr"><span class="panel-title" style="color:'+info.color+'">&#9679; '+pc+' &mdash; '+info.name+' ('+pd.length+' defects)</span>'+
+      '<div style="display:flex;gap:6px">'+
+        '<button class="btn btn-outline btn-sm" onclick="filterByProduct(\''+pc+'\')">All Defects &#8594;</button>'+
+        '<button class="btn btn-primary btn-sm" onclick="addDefectForProduct(\''+pc+'\')">&#10133; Add</button>'+
+      '</div>'+
+    '</div>'+
+    // Mini KPIs
+    '<div class="grid-4" style="margin-bottom:14px">'+
+      miniKPI(pd.filter(function(x){return x.status==='Open';}).length,'Open','#dc2626')+
+      miniKPI(pd.filter(function(x){return x.status==='Fixed';}).length,'Fixed','#16a34a')+
+      miniKPI(pd.filter(function(x){return x.status==='Ready for Test';}).length,'Ready for Test','#d97706')+
+      miniKPI(pd.filter(function(x){return x.priority==='P1';}).length,'P1 Critical','#e11d48')+
+    '</div>'+
+    // Charts
+    '<div class="grid-2" style="margin-bottom:14px">'+
+      '<div><div class="panel-title" style="margin-bottom:8px">Status Distribution</div><div class="chart-wrap" style="height:160px"><canvas id="pdc-status-'+pc+'"></canvas></div></div>'+
+      '<div><div class="panel-title" style="margin-bottom:8px">Top Screens</div><div id="pdc-screens-'+pc+'"></div></div>'+
+    '</div>'+
+    // Filters
+    '<div class="filter-wrap" style="margin-bottom:10px">'+
+      '<div class="filter-row">'+
+        '<div class="fg"><label>Status</label><select id="'+filtId+'" onchange="renderProductTable(\''+pc+'\')"><option value="">All</option>'+getStatuses().map(function(s){return'<option>'+esc(s)+'</option>';}).join('')+'</select></div>'+
+        '<div class="fg"><label>Priority</label><select id="'+filtPriId+'" onchange="renderProductTable(\''+pc+'\')"><option value="">All</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select></div>'+
+        '<div class="fg"><label>Type</label><select id="'+filtTypeId+'" onchange="renderProductTable(\''+pc+'\')"><option value="">All Types</option><option>Functional</option><option>Enable/Disable</option><option>Backend/API</option><option>UI/UX &amp; Labels</option></select></div>'+
+        '<div class="fg"><label>Screen</label><select id="'+filtScrId+'" onchange="renderProductTable(\''+pc+'\')"><option value="">All Screens</option>'+getScreens().map(function(s){return'<option>'+esc(s)+'</option>';}).join('')+'</select></div>'+
+        '<div class="fg"><label>Assignee</label><select id="'+filtAssId+'" onchange="renderProductTable(\''+pc+'\')"><option value="">All</option>'+getAssignees().map(function(a){return'<option>'+esc(a)+'</option>';}).join('')+'</select></div>'+
+        '<div class="fg fg-search"><label>Search</label><input id="'+filtQId+'" placeholder="Search..." oninput="renderProductTable(\''+pc+'\')"/></div>'+
+      '</div>'+
+    '</div>'+
+    // Table
+    '<div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Sheet</th><th>Endt Code</th><th>Screen</th><th>Description</th><th>Type</th><th>Priority</th><th>Status</th><th>Tester</th><th>Assignee</th><th>Actions</th></tr></thead><tbody id="'+tblId+'"></tbody></table></div>'+
+  '</div>';
+
+  // Render product charts
+  var sg=groupBy(pd,'status');
+  setTimeout(function(){
+    mkChart('pdc-status-'+pc,'doughnut',Object.keys(sg),[{data:Object.values(sg),backgroundColor:Object.keys(sg).map(function(k){return STAT_COLORS[k]||'#94a3b8';}),borderWidth:2,hoverOffset:6}],{cutout:'58%',plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:9}}}});
+    var scTop=topN(groupBy(pd,'screenName'),8);
+    renderBarList('pdc-screens-'+pc,scTop,info.color);
+  },50);
+
+  renderProductTable(pc);
+}
+
+function miniKPI(val,label,color){
+  return'<div class="mini-kpi"><div class="mini-kpi-value" style="color:'+color+'">'+val+'</div><div class="mini-kpi-label">'+label+'</div></div>';
+}
+
+function renderProductTable(pc){
+  var tblId='pd-tbl-'+pc;
+  var tbody=document.getElementById(tblId);if(!tbody)return;
+  var fs=v('pd-f-status-'+pc),fp=v('pd-f-pri-'+pc),ft=v('pd-f-type-'+pc),fsc=v('pd-f-screen-'+pc),fa=v('pd-f-ass-'+pc),fq=(v('pd-f-q-'+pc)||'').toLowerCase();
+  var pd=allDefects.filter(function(x){
+    if((x.productCode||x.product)!==pc)return false;
+    if(fs&&x.status!==fs)return false;
+    if(fp&&x.priority!==fp)return false;
+    if(ft&&x.defectType!==ft)return false;
+    if(fsc&&x.screenName!==fsc)return false;
+    if(fa&&x.devAssignee!==fa)return false;
+    if(fq){var hay=(x.description+' '+x.screenName+' '+x.defectID+' '+x.comments+' '+x.opusRef).toLowerCase();if(hay.indexOf(fq)===-1)return false;}
+    return true;
+  }).sort(function(a,b){var pm={P1:1,P2:2,P3:3,P4:4};return(pm[a.priority]||5)-(pm[b.priority]||5);});
+
+  if(!pd.length){tbody.innerHTML='<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--muted)">No defects match filters</td></tr>';return;}
+  tbody.innerHTML=pd.map(function(d){
+    return'<tr>'+
+      '<td class="td-id" onclick="openDetail(\''+esc(d.defectID)+'\')">'+esc(d.defectID)+'</td>'+
+      '<td style="font-size:11px;color:var(--muted)">'+esc(d.sourceSheet)+'</td>'+
+      '<td style="font-size:11px" class="td-truncate" title="'+esc(d.endtCode)+'">'+esc(d.endtCode)+'</td>'+
+      '<td class="td-truncate" title="'+esc(d.screenName)+'">'+esc(d.screenName)+'</td>'+
+      '<td class="td-truncate" title="'+esc(d.description)+'">'+esc(d.description)+'</td>'+
+      '<td>'+dtBadge(d.defectType)+'</td>'+
+      '<td>'+priBadge(d.priority)+'</td>'+
+      '<td class="editable-cell" onclick="quickStatusEdit(this,\''+esc(d.defectID)+'\')">'+statusBadge(d.status)+'</td>'+
+      '<td style="font-size:11px">'+esc(d.tester)+'</td>'+
+      '<td class="editable-cell" style="font-size:11px" onclick="quickAssignEdit(this,\''+esc(d.defectID)+'\')">'+esc(d.devAssignee||'—')+'</td>'+
+      '<td style="white-space:nowrap;display:flex;gap:3px;padding:5px 8px">'+
+        '<button class="btn btn-ghost btn-xs" onclick="openEdit(\''+esc(d.defectID)+'\')">&#9998;</button>'+
+        '<button class="btn btn-ghost btn-xs" style="color:#dc2626" onclick="quickDelete(\''+esc(d.defectID)+'\')">&#128465;</button>'+
+      '</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function addDefectForProduct(pc){
+  var el=document.getElementById('af-product');if(el)el.value=pc;
+  syncSheetFromProduct('af-product','af-sheet');
+  nav('add');
+}
+function syncSheetFromProduct(prodId,sheetId){
+  var pc=v(prodId),info=PRODUCT_INFO[pc];
+  if(info){var s=document.getElementById(sheetId);if(s)s.value=info.sheet;}
+}
+
+// ══════════════════════════════════════════════════
+// INSIGHTS
+// ══════════════════════════════════════════════════
 function renderInsights(){
   if(!allDefects.length)return;
-  var d=allDefects,open=d.filter(function(x){return x.status==='Open';}).length,fixed=d.filter(function(x){return x.status==='Fixed'||x.status==='Closed';}).length,p1=d.filter(function(x){return x.priority==='P1';}).length,fixRate=d.length?Math.round(fixed/d.length*100):0;
-  var beCount=d.filter(function(x){var c=(x.comments||'').toLowerCase();return c.indexOf('be ')!==-1||c.indexOf('backend')!==-1||c.indexOf('api')!==-1;}).length;
-  document.getElementById('insightCards').innerHTML=[{label:'Fix Rate',value:fixRate+'%',sub:'of defects resolved',cls:'c-green'},{label:'Open',value:open,sub:'require action',cls:'c-red'},{label:'P1 Critical',value:p1,sub:'highest priority',cls:'c-rose'},{label:'BE Issues',value:beCount,sub:'backend related',cls:'c-blue'},{label:'FE Issues',value:d.length-beCount,sub:'frontend related',cls:'c-violet'},{label:'Total',value:d.length,sub:'all defects',cls:'c-slate'}].map(function(c){return'<div class="kpi-card '+c.cls+'"><div><div class="kpi-label">'+c.label+'</div><div class="kpi-value">'+c.value+'</div><div class="kpi-sub">'+c.sub+'</div></div></div>';}).join('');
-  var sc=topN(groupBy(d,'screenName'),10),maxSc=sc[0]?sc[0][1]:1;
-  document.getElementById('topModules').innerHTML=sc.map(function(x){return'<div class="prog-row"><div class="prog-label">'+esc(x[0])+'</div><div class="prog-count">'+x[1]+'</div><div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:'+Math.round(x[1]/maxSc*100)+'%;background:var(--brand)"></div></div></div>';}).join('');
-  var ac=topN(groupBy(d,'devAssignee'),10).filter(function(x){return x[0]&&x[0]!=='Unknown';}),maxAc=ac[0]?ac[0][1]:1;
-  document.getElementById('assigneeBreakdown').innerHTML=ac.map(function(x){return'<div class="prog-row"><div class="prog-label">'+esc(x[0])+'</div><div class="prog-count">'+x[1]+'</div><div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:'+Math.round(x[1]/maxAc*100)+'%;background:#7c3aed"></div></div></div>';}).join('')||'<p style="color:var(--muted);font-size:12px">No assignee data</p>';
+  var d=allDefects,n=d.length||1;
+  var open=d.filter(function(x){return x.status==='Open';}).length;
+  var fixed=d.filter(function(x){return x.status==='Fixed';}).length;
+  var rft=d.filter(function(x){return x.status==='Ready for Test';}).length;
+  var p1=d.filter(function(x){return x.priority==='P1';}).length;
+  var be=d.filter(function(x){return x.defectType==='Backend/API';}).length;
+  var fixRate=Math.round(fixed/n*100);
+  var unassigned=d.filter(function(x){return!x.devAssignee&&x.status==='Open';}).length;
+  document.getElementById('insightKPIs').innerHTML=[
+    {v:fixRate+'%',l:'Fix Rate',c:'c-green'},{v:open,l:'Still Open',c:'c-red'},
+    {v:rft,l:'Ready to Test',c:'c-amber'},{v:p1,l:'P1 Critical',c:'c-rose'},
+    {v:be,l:'Backend/API',c:'c-blue'},{v:unassigned,l:'Unassigned',c:'c-orange'}
+  ].map(function(c){return'<div class="kpi-card '+c.c+'"><div class="kpi-value">'+c.v+'</div><div class="kpi-label">'+c.l+'</div></div>';}).join('');
+  var prods=Object.keys(PRODUCT_INFO);
+  var fixRates=prods.map(function(pc){var pd=d.filter(function(x){return(x.productCode||x.product)===pc;});return pd.length?Math.round(pd.filter(function(x){return x.status==='Fixed';}).length/pd.length*100):0;});
+  var openRates=prods.map(function(pc){var pd=d.filter(function(x){return(x.productCode||x.product)===pc;});return pd.length?Math.round(pd.filter(function(x){return x.status==='Open';}).length/pd.length*100):0;});
+  mkChart('chartFixRate','bar',prods.map(function(pc){return PRODUCT_INFO[pc]?PRODUCT_INFO[pc].name:pc;}),
+    [{label:'Fixed %',data:fixRates,backgroundColor:'#16a34a',borderRadius:6},{label:'Open %',data:openRates,backgroundColor:'#dc2626',borderRadius:6}],
+    {plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+'%';},font:{size:10}},grid:{color:'rgba(100,116,139,.1)'}},x:{grid:{display:false},ticks:{font:{size:10}}}}});
+  var types=['Functional','Enable/Disable','Backend/API','UI/UX & Labels'];
+  var statKeys=['Open','Fixed','Not Fixed','Ready for Test'];
+  var trendDS=statKeys.map(function(s){return{label:s,data:types.map(function(t){return d.filter(function(x){return x.defectType===t&&x.status===s;}).length;}),backgroundColor:STAT_COLORS[s],borderRadius:4};});
+  mkChart('chartTrend','bar',types,trendDS,{plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}},y:{stacked:true,beginAtZero:true,grid:{color:'rgba(100,116,139,.1)'},ticks:{font:{size:10}}}}});
+  renderBarList('insightScreens',topN(groupBy(d,'screenName'),10),PALETTE[0]);
+  renderBarList('insightEndts',topN(groupBy(d,'endtCode'),10).filter(function(x){return x[0]&&x[0]!=='Unknown';}),PALETTE[4]);
+  renderBarList('insightTesters',topN(groupBy(d,'tester'),10).filter(function(x){return x[0]&&x[0]!=='Unknown';}),'#d97706');
+}
+
+// ══════════════════════════════════════════════════
+// ASSIGN PAGE
+// ══════════════════════════════════════════════════
+function renderAssignPage(){
+  if(!allDefects.length)return;
+  var open=allDefects.filter(function(x){return x.status==='Open';});
+  // Workload chart
+  var ac=groupBy(open,'devAssignee');
+  var sorted=topN(ac,12);
+  mkChart('chartWorkload','horizontalBar'||'bar',sorted.map(function(x){return x[0]||'Unassigned';}),
+    [{data:sorted.map(function(x){return x[1];}),backgroundColor:PALETTE,borderRadius:5}],
+    {indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'rgba(100,116,139,.1)'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}});
+  // Unassigned list
+  var unass=open.filter(function(d){return!d.devAssignee;});
+  var uc=document.getElementById('unassignedCount');if(uc)uc.textContent=unass.length;
+  var ul=document.getElementById('unassignedList');
+  if(ul){
+    if(!unass.length){ul.innerHTML='<p style="color:var(--muted);font-size:12px">All open defects are assigned!</p>';}
+    else{
+      ul.innerHTML=unass.slice(0,20).map(function(d){
+        var assignees=[...new Set(allDefects.map(function(x){return x.devAssignee;}).filter(Boolean))].sort();
+        return'<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'+
+          '<span class="td-id" onclick="openEdit(\''+esc(d.defectID)+'\')" style="cursor:pointer;min-width:70px">'+esc(d.defectID)+'</span>'+
+          priBadge(d.priority)+
+          '<span style="flex:1;font-size:12px" class="td-truncate" title="'+esc(d.description)+'">'+esc(d.screenName||d.description)+'</span>'+
+          '<select class="inline-select" style="min-width:130px" onchange="assignDefect(\''+esc(d.defectID)+'\',this.value);this.value=\'\'">'+
+            '<option value="">Assign to...</option>'+assignees.map(function(a){return'<option>'+esc(a)+'</option>';}).join('')+
+          '</select>'+
+        '</div>';
+      }).join('')+(unass.length>20?'<p style="font-size:11px;color:var(--muted);padding-top:6px">...and '+(unass.length-20)+' more</p>':'');
+    }
+  }
+  // By screen
+  var byScreen=groupBy(open,'screenName');
+  var sl=document.getElementById('assignScreenList');
+  if(sl){
+    var screens=topN(byScreen,15);
+    sl.innerHTML='<div style="display:flex;flex-direction:column;gap:8px">'+screens.map(function(s){
+      var screenDefects=open.filter(function(d){return d.screenName===s[0];});
+      var assignees=[...new Set(allDefects.map(function(x){return x.devAssignee;}).filter(Boolean))].sort();
+      return'<div style="display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2)">'+
+        '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600" class="td-truncate">'+esc(s[0])+'</div><div style="font-size:11px;color:var(--muted)">'+s[1]+' open defects</div></div>'+
+        '<select class="inline-select" style="min-width:140px" onchange="assignScreen(\''+esc(s[0])+'\',this.value);this.value=\'\'">'+
+          '<option value="">Assign all to...</option>'+assignees.map(function(a){return'<option>'+esc(a)+'</option>';}).join('')+
+        '</select>'+
+        '<button class="btn btn-outline btn-xs" onclick="filterByScreen(\''+esc(s[0])+'\')">View &#8594;</button>'+
+      '</div>';
+    }).join('')+'</div>';
+  }
+}
+
+function assignDefect(id,assignee){
+  if(!assignee)return;
+  var d=allDefects.find(function(x){return x.defectID===id;});if(!d)return;
+  d.devAssignee=assignee;
+  logActivity('Assigned: '+id+' → '+assignee,'success');
+  buildFilters();applyFilter();renderAssignPage();renderCharts();
+  toast('Assigned '+id+' to '+assignee,'success');
+}
+function assignScreen(screen,assignee){
+  if(!assignee)return;
+  var cnt=0;
+  allDefects.filter(function(d){return d.screenName===screen&&d.status==='Open';}).forEach(function(d){d.devAssignee=assignee;cnt++;});
+  logActivity('Bulk assign screen "'+screen+'" ('+cnt+' defects) → '+assignee,'success');
+  buildFilters();applyFilter();renderAssignPage();renderCharts();
+  toast('Assigned '+cnt+' defects on "'+screen+'" to '+assignee,'success');
+}
+function filterByScreen(screen){
+  clearFilters();
+  var fsr=document.getElementById('f-search');if(fsr)fsr.value=screen;
+  applyFilter();nav('defects');
+}
+
+// ══════════════════════════════════════════════════
+// EDIT / ADD / DELETE
+// ══════════════════════════════════════════════════
+function openDetail(id){
+  var d=allDefects.find(function(x){return x.defectID===id;});if(!d)return;
+  currentDetailId=id;
+  var db=document.getElementById('detailBody');if(!db)return;
+  function row(l,v){return v?'<div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)"><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;min-width:120px">'+l+'</div><div style="font-size:12px;flex:1">'+v+'</div></div>':'';}
+  db.innerHTML=
+    row('Defect ID',esc(d.defectID))+
+    row('Product',esc((d.productCode||d.product)+' — '+(PRODUCT_INFO[d.productCode]?PRODUCT_INFO[d.productCode].name:'')))+
+    row('Source Sheet',esc(d.sourceSheet))+
+    row('Endt Code',esc(d.endtCode))+
+    row('Screen',esc(d.screenName))+
+    row('Priority',priBadge(d.priority))+
+    row('Status',statusBadge(d.status))+
+    row('Defect Type',dtBadge(d.defectType))+
+    row('Tester',esc(d.tester))+
+    row('Dev Assignee',esc(d.devAssignee))+
+    row('OPUS Ref','<span style="color:var(--brand)">'+esc(d.opusRef)+'</span>')+
+    row('Legacy Ref',esc(d.legacyRef))+
+    row('Description','<div style="line-height:1.6">'+esc(d.description)+'</div>')+
+    row('Comments','<div style="line-height:1.6;color:var(--muted)">'+esc(d.comments)+'</div>')+
+    row('Test Data',esc(d.testData));
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function openEdit(id){
+  var d=allDefects.find(function(x){return x.defectID===id;});if(!d)return;
+  editingId=id;
+  function sv(id,v){var el=document.getElementById(id);if(el)el.value=v||'';}
+  sv('ef-id',d.defectID);sv('ef-product',d.productCode||d.product);sv('ef-sheet',d.sourceSheet);
+  sv('ef-endt',d.endtCode);sv('ef-screen',d.screenName);sv('ef-priority',d.priority);
+  sv('ef-status',d.status);sv('ef-type',d.defectType);sv('ef-tester',d.tester);
+  sv('ef-assignee',d.devAssignee);sv('ef-opus',d.opusRef);sv('ef-legacy',d.legacyRef);
+  sv('ef-desc',d.description);sv('ef-comments',d.comments);sv('ef-testdata',d.testData);
+  var mid=document.getElementById('editModalId');if(mid)mid.textContent='— '+id;
+  document.getElementById('editModal').classList.add('show');
+}
+function closeEditModal(){document.getElementById('editModal').classList.remove('show');editingId=null;}
+
+function saveEdit(){
+  var d=allDefects.find(function(x){return x.defectID===editingId;});if(!d)return;
+  function gv(id){var el=document.getElementById(id);return el?el.value:'';}
+  var old=JSON.stringify({status:d.status,devAssignee:d.devAssignee,priority:d.priority});
+  d.productCode=gv('ef-product');d.sourceSheet=gv('ef-sheet');d.endtCode=gv('ef-endt');
+  d.screenName=gv('ef-screen');d.priority=gv('ef-priority');d.status=gv('ef-status');
+  d.defectType=gv('ef-type');d.tester=gv('ef-tester');d.devAssignee=gv('ef-assignee');
+  d.opusRef=gv('ef-opus');d.legacyRef=gv('ef-legacy');d.description=gv('ef-desc');
+  d.comments=gv('ef-comments');d.testData=gv('ef-testdata');
+  closeEditModal();
+  logActivity('Edited: '+editingId,'info');
+  buildFilters();applyFilter();updateKPIs();renderCharts();renderInsights();renderRFTPanel();renderProducts();renderAssignPage();updateNavBadges();
+  toast('Saved: '+editingId,'success');
+}
+
+function markAsRFT(){
+  var d=allDefects.find(function(x){return x.defectID===editingId;});if(!d)return;
+  var s=document.getElementById('ef-status');if(s)s.value='Ready for Test';
+  toast('Status set to Ready for Test — click Save to confirm','info');
+}
+
+function deleteDefect(){
+  if(!editingId)return;
+  if(!confirm('Delete defect '+editingId+'?'))return;
+  var id=editingId;
+  allDefects=allDefects.filter(function(x){return x.defectID!==id;});
+  filtered=filtered.filter(function(x){return x.defectID!==id;});
+  closeEditModal();
+  logActivity('Deleted: '+id,'warn');
+  buildFilters();applyFilter();updateKPIs();renderCharts();renderInsights();updateNavBadges();renderProducts();
+  toast('Deleted: '+id,'warn');
+}
+
+function quickDelete(id){
+  if(!confirm('Delete '+id+'?'))return;
+  allDefects=allDefects.filter(function(x){return x.defectID!==id;});
+  filtered=filtered.filter(function(x){return x.defectID!==id;});
+  logActivity('Deleted: '+id,'warn');
+  buildFilters();applyFilter();updateKPIs();renderCharts();renderInsights();updateNavBadges();renderProducts();
+  toast('Deleted: '+id,'warn');
+}
+
+function duplicateDefect(id){
+  var d=allDefects.find(function(x){return x.defectID===id;});if(!d)return;
+  var maxId=allDefects.reduce(function(m,x){var n=parseInt((x.defectID||'').replace(/\D/g,''));return n>m?n:m;},0);
+  var newId='D'+(maxId+1).toString().padStart(4,'0');
+  var copy=Object.assign({},d,{defectID:newId,status:'Open',_added:true});
+  allDefects.push(copy);addedDefects.push(copy);
+  logActivity('Duplicated: '+id+' → '+newId,'info');
+  buildFilters();buildSuggestions();applyFilter();updateKPIs();renderProducts();updateNavBadges();
+  toast('Duplicated as '+newId,'success');
+}
+
+function saveDefect(){
+  function gv(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+  if(!gv('af-desc')){toast('Description is required','error');return;}
+  if(!gv('af-product')){toast('Product Code is required','error');return;}
+  var maxId=allDefects.reduce(function(m,d){var n=parseInt((d.defectID||'').replace(/\D/g,''));return n>m?n:m;},0);
+  var newId='D'+(maxId+1).toString().padStart(4,'0');
+  var d={defectID:newId,productCode:gv('af-product'),sourceSheet:gv('af-sheet'),endtCode:gv('af-endt'),screenName:gv('af-screen'),description:gv('af-desc'),comments:gv('af-comments'),priority:gv('af-priority'),status:gv('af-status'),defectType:gv('af-type'),tester:gv('af-tester'),devAssignee:gv('af-assignee'),opusRef:gv('af-opus'),legacyRef:gv('af-legacy'),testData:gv('af-testdata'),notes:'',product:'',productName:'',_added:true};
+  allDefects.push(d);addedDefects.push(d);
+  logActivity('New defect added: '+newId+' — '+d.screenName,'success');
+  buildFilters();buildSuggestions();applyFilter();updateKPIs();renderCharts();renderInsights();renderProducts();renderRFTPanel();renderAssignPage();updateNavBadges();
+  clearAddForm();
+  toast('Added: '+newId,'success');
+  nav('defects');
+}
+
+function clearAddForm(){
+  ['af-id','af-product','af-sheet','af-endt','af-screen','af-desc','af-comments','af-testdata','af-tester','af-assignee','af-opus','af-legacy'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var ep=document.getElementById('af-priority');if(ep)ep.value='P3';
+  var es=document.getElementById('af-status');if(es)es.value='Open';
+}
+function clearAdded(){addedDefects=[];allDefects=allDefects.filter(function(d){return!d._added;});buildFilters();applyFilter();updateKPIs();renderCharts();renderProducts();updateNavBadges();toast('Cleared manually-added defects','warn');}
+</script>
+
+
+<script>
+// ══════════════════════════════════════════════════
+// FILE OPS — OneDrive + SharePoint + Upload
+// ══════════════════════════════════════════════════
+async function pickLocalFile(){
+  if(!window.showOpenFilePicker){toast('Browser does not support File System Access. Use Edge or Chrome.','error');return;}
+  try{
+    var handles=await window.showOpenFilePicker({types:[{description:'Excel Files',accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx','.xls']}}],multiple:false});
+    liveFileHandle=handles[0];
+    var fi=document.getElementById('liveFileInfo');if(fi)fi.style.display='block';
+    document.getElementById('liveFileName').innerHTML='&#128994; <strong>'+liveFileHandle.name+'</strong> — polling every '+liveIntervalSec+'s';
+    document.getElementById('syncPill').classList.add('show');
+    document.getElementById('syncLabel').textContent='Live sync ON';
+    document.getElementById('refreshBtn').style.display='';
+    document.getElementById('refreshBtn2').style.display='';
+    await readLiveFile(true);
+    startLiveTimer();
+    nav('dashboard');
+    toast('Live sync active — polling every '+liveIntervalSec+'s','success');
+    logActivity('Live sync started: '+liveFileHandle.name,'success');
+  }catch(e){if(e.name!=='AbortError')toast('Error: '+e.message,'error');}
+}
+
+function startLiveTimer(){
+  if(liveTimer)clearInterval(liveTimer);
+  liveTimer=setInterval(function(){readLiveFile(false);},liveIntervalSec*1000);
+}
+
+async function readLiveFile(force){
+  if(!liveFileHandle)return;
+  try{
+    var file=await liveFileHandle.getFile();
+    if(!force&&file.lastModified===liveLastMod)return;
+    liveLastMod=file.lastModified;
+    var buf=await file.arrayBuffer();
+    var data=parseBuffer(buf);
+    if(!data.length){toast('No data found in file','warn');return;}
+    loadData(data);
+    var fn=document.getElementById('liveFileName');
+    if(fn)fn.innerHTML='&#128994; <strong>'+liveFileHandle.name+'</strong> — updated '+new Date(file.lastModified).toLocaleTimeString();
+  }catch(e){toast('Sync error: '+e.message,'error');stopLiveSync();}
+}
+
+function stopLiveSync(){
+  if(liveTimer){clearInterval(liveTimer);liveTimer=null;}
+  liveFileHandle=null;liveLastMod=0;
+  var fi=document.getElementById('liveFileInfo');if(fi)fi.style.display='none';
+  document.getElementById('syncPill').classList.remove('show');
+  document.getElementById('refreshBtn').style.display='none';
+  document.getElementById('refreshBtn2').style.display='none';
+  toast('Live sync stopped','warn');
+  logActivity('Live sync stopped','warn');
+}
+
+function setRefreshInterval(sec){
+  liveIntervalSec=sec||60;
+  if(liveFileHandle){startLiveTimer();toast('Refresh interval: '+sec+'s','success');}
+  try{localStorage.setItem('dd-interval',sec);}catch(e){}
+}
+
+async function loadFromUrl(){
+  var url=v('spUrl').trim();
+  if(!url){toast('Enter a URL or network path','warn');return;}
+  var st=document.getElementById('spStatus');if(st)st.textContent='Connecting...';
+  try{
+    var resp=await fetch(url,{mode:'cors',credentials:'include'});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    var buf=await resp.arrayBuffer();
+    var data=parseBuffer(buf);
+    if(!data.length){if(st)st.textContent='No data found';toast('No data found in file','warn');return;}
+    loadData(data);
+    if(st)st.innerHTML='<span style="color:#16a34a">Connected — '+data.length+' defects loaded</span>';
+    logActivity('Loaded from URL: '+url,'success');
+    nav('dashboard');
+  }catch(e){
+    var msg='Failed to connect: '+e.message;
+    if(st)st.innerHTML='<span style="color:#dc2626">'+msg+'. CORS may block direct browser access to SharePoint — use the OneDrive sync option instead.</span>';
+    toast(msg,'error');
+  }
 }
 
 function onFileChange(e){readFile(e.target.files[0]);}
 function onDrop(e){e.preventDefault();document.getElementById('dropZone').classList.remove('drag');readFile(e.dataTransfer.files[0]);}
 function readFile(file){
   if(!file)return;
-  document.getElementById('uploadedFileName').textContent='Loaded: '+file.name;
+  var fn=document.getElementById('uploadedFileName');if(fn)fn.textContent='Loading: '+file.name+'...';
   var reader=new FileReader();
-  reader.onload=function(e){try{var data=parseBuffer(e.target.result);if(!data.length){toast('No data rows found in Excel file',4000);return;}loadData(data);nav('dashboard');}catch(err){toast('Error reading file: '+err.message,5000);}};
+  reader.onload=function(e){
+    try{
+      var data=parseBuffer(e.target.result);
+      if(!data.length){toast('No data rows found','error');return;}
+      loadData(data);
+      if(fn)fn.textContent='Loaded: '+file.name+' ('+data.length+' rows)';
+      logActivity('File uploaded: '+file.name+' — '+data.length+' rows','success');
+      nav('dashboard');
+    }catch(err){toast('Error reading file: '+err.message,'error');if(fn)fn.textContent='';}
+  };
   reader.readAsArrayBuffer(file);
 }
+function doRefresh(){if(liveFileHandle)readLiveFile(true);else{nav('datasource');toast('No live source connected — pick a file first','warn');}}
 
-// ── LIVE SYNC via File System Access API ─────────────────────────────────────
-var liveFileHandle=null,liveTimer=null,liveLastMod=0;
-
-async function pickLocalFile(){
-  if(!window.showOpenFilePicker){
-    document.getElementById('liveStatus').innerHTML='Your browser does not support file system access. Use <strong>Option 1 (Upload)</strong> above, or use Edge/Chrome.';
-    return;
-  }
-  try{
-    var handles=await window.showOpenFilePicker({types:[{description:'Excel Files',accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx','.xls']}}],multiple:false});
-    liveFileHandle=handles[0];
-    document.getElementById('liveFileInfo').style.display='block';
-    document.getElementById('liveFileName').textContent='Live: '+liveFileHandle.name+' — auto-refreshing every 60s';
-    document.getElementById('syncPill').classList.add('show');
-    document.getElementById('syncLabel').textContent='Live sync ON';
-    document.getElementById('refreshBtn').style.display='';
-    document.getElementById('refreshBtn2').style.display='';
-    await readLiveFile();
-    if(liveTimer)clearInterval(liveTimer);
-    liveTimer=setInterval(readLiveFile,60000);
-    nav('dashboard');
-    toast('Live sync started — auto-refreshing every 60s',4000);
-  }catch(e){
-    if(e.name!=='AbortError') document.getElementById('liveStatus').textContent='Error: '+e.message;
-  }
-}
-
-async function readLiveFile(){
-  if(!liveFileHandle)return;
-  try{
-    var file=await liveFileHandle.getFile();
-    if(file.lastModified===liveLastMod&&liveLastMod!==0)return; // no change
-    liveLastMod=file.lastModified;
-    var buf=await file.arrayBuffer();
-    var data=parseBuffer(buf);
-    if(!data.length)return;
-    loadData(data);
-    document.getElementById('liveFileName').textContent='Live: '+liveFileHandle.name+' — updated '+new Date(file.lastModified).toLocaleTimeString();
-  }catch(e){
-    document.getElementById('liveFileName').textContent='Sync error: '+e.message+' — re-pick the file';
-    stopLiveSync();
-  }
-}
-
-function stopLiveSync(){
-  if(liveTimer){clearInterval(liveTimer);liveTimer=null;}
-  liveFileHandle=null;liveLastMod=0;
-  document.getElementById('liveFileInfo').style.display='none';
-  document.getElementById('liveStatus').textContent='';
-  document.getElementById('syncPill').classList.remove('show');
-  document.getElementById('refreshBtn').style.display='none';
-  document.getElementById('refreshBtn2').style.display='none';
-}
-
-function doRefresh(){
-  if(liveFileHandle)readLiveFile();
-  else{nav('datasource');toast('Pick a file or upload first',2500);}
-}
-
-function loadDemoData(){
-  var D=[{id:1,product:'040100',endtCode:'END-001',screenName:'Policy Header',description:'Product code not saving on endorsement add',comments:'Validation missing',priority:'P1',status:'Open',tester:'Alice',devAssignee:'Bob',eta:'2024-06-10'},{id:2,product:'040100',endtCode:'END-002',screenName:'Coverage Screen',description:'Premium field not populating on endorsement add',comments:'BE dependency - API not returning data',priority:'P1',status:'Open',tester:'Alice',devAssignee:'Charlie',eta:'2024-06-12'},{id:3,product:'040100',endtCode:'END-003',screenName:'Risk Details',description:'Risk address not pre-filling from policy',comments:'Frontend issue - missing mapping',priority:'P2',status:'In Progress',tester:'Bob',devAssignee:'Dave',eta:'2024-06-15'},{id:4,product:'040100',endtCode:'END-004',screenName:'Endorsement Summary',description:'Effective date allows past dates without warning',comments:'Validation rule missing',priority:'P2',status:'Fixed',tester:'Alice',devAssignee:'Bob',eta:'2024-06-08'},{id:5,product:'040100',endtCode:'END-005',screenName:'Payment Screen',description:'Payment confirmation not sent after endorsement',comments:'Email service timeout',priority:'P1',status:'Open',tester:'Charlie',devAssignee:'Eve',eta:'2024-06-11'},{id:6,product:'040300',endtCode:'END-006',screenName:'Policy Header',description:'Insured name truncated to 30 chars on UI',comments:'UI field length constraint',priority:'P3',status:'Fixed',tester:'Bob',devAssignee:'Frank',eta:'2024-06-09'},{id:7,product:'040300',endtCode:'END-007',screenName:'Coverage Screen',description:'Limit of liability shows wrong default value',comments:'Config issue in backend',priority:'P2',status:'RFT',tester:'Alice',devAssignee:'Charlie',eta:'2024-06-14'},{id:8,product:'040300',endtCode:'END-008',screenName:'Risk Details',description:'Building value field accepts negative numbers',comments:'Missing min value validation',priority:'P3',status:'Fixed',tester:'Charlie',devAssignee:'Dave',eta:'2024-06-07'},{id:9,product:'040300',endtCode:'END-009',screenName:'Documents',description:'Policy schedule PDF missing endorsement reason',comments:'Template not updated',priority:'P2',status:'Open',tester:'Bob',devAssignee:'Eve',eta:'2024-06-16'},{id:10,product:'040300',endtCode:'END-010',screenName:'Endorsement Summary',description:'Cancellation endorsement shows wrong premium diff',comments:'Calculation logic error in BE',priority:'P1',status:'In Progress',tester:'Alice',devAssignee:'Frank',eta:'2024-06-13'},{id:11,product:'040700',endtCode:'END-011',screenName:'Policy Header',description:'Policy version not incrementing on endorsement save',comments:'DB trigger issue',priority:'P2',status:'Open',tester:'Dave',devAssignee:'Bob',eta:'2024-06-17'},{id:12,product:'040700',endtCode:'END-012',screenName:'Coverage Screen',description:'Cover type dropdown missing Fire option for 040700',comments:'Master data issue',priority:'P1',status:'Fixed',tester:'Alice',devAssignee:'Charlie',eta:'2024-06-06'},{id:13,product:'040700',endtCode:'END-013',screenName:'Risk Details',description:'Construction type field not mandatory as per business rule',comments:'Validation rule update needed',priority:'P3',status:'Not Fixed',tester:'Bob',devAssignee:'Dave',eta:'2024-06-18'},{id:14,product:'040700',endtCode:'END-014',screenName:'Payment Screen',description:'Installment schedule recalculates on page refresh',comments:'State management bug in FE',priority:'P2',status:'In Progress',tester:'Charlie',devAssignee:'Eve',eta:'2024-06-15'},{id:15,product:'040700',endtCode:'END-015',screenName:'Endorsement Summary',description:'Endorsement history not showing previous changes',comments:'Audit log query incorrect',priority:'P3',status:'RFT',tester:'Dave',devAssignee:'Frank',eta:'2024-06-10'},{id:16,product:'040100',endtCode:'END-016',screenName:'Documents',description:'Wrong document template selected for mid-term endorsement',comments:'Template mapping table incorrect',priority:'P2',status:'Fixed',tester:'Alice',devAssignee:'Bob',eta:'2024-06-05'},{id:17,product:'040300',endtCode:'END-017',screenName:'Coverage Screen',description:'Sum insured field loses value on navigation back',comments:'Session not persisting',priority:'P2',status:'Open',tester:'Bob',devAssignee:'Charlie',eta:'2024-06-19'},{id:18,product:'040700',endtCode:'END-018',screenName:'Policy Header',description:'Endorsement reason code not mapped to policy system',comments:'Integration gap with core system',priority:'P1',status:'Open',tester:'Charlie',devAssignee:'Dave',eta:'2024-06-20'},{id:19,product:'040100',endtCode:'END-019',screenName:'Risk Details',description:'Fire alarm discount not applying on add endorsement',comments:'Discount logic skipping endorsement type',priority:'P3',status:'Fixed',tester:'Dave',devAssignee:'Eve',eta:'2024-06-04'},{id:20,product:'040300',endtCode:'END-020',screenName:'Payment Screen',description:'Refund amount shows as 0 on cancellation endorsement',comments:'Proration formula bug',priority:'P1',status:'Open',tester:'Alice',devAssignee:'Frank',eta:'2024-06-21'}];
-  loadData(D);nav('dashboard');toast('Demo data loaded - 20 sample defects',3000);
-}
-
+// ══════════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════════
 function exportCSV(){
-  var cols=['id','product','endtCode','screenName','description','comments','priority','status','tester','devAssignee','eta'];
-  var rows=[cols.join(',')].concat(filtered.map(function(d){return cols.map(function(c){return'"'+(d[c]||'').toString().replace(/"/g,'""')+'"';}).join(',');}));
-  var blob=new Blob([rows.join('\n')],{type:'text/csv'});
+  var cols=['defectID','productCode','sourceSheet','endtCode','screenName','description','comments','priority','status','defectType','tester','devAssignee','opusRef','legacyRef','testData','notes'];
+  var data=filtered.length&&filtered.length<allDefects.length?filtered:allDefects;
+  var rows=[cols.join(',')].concat(data.map(function(d){return cols.map(function(c){return'"'+(d[c]||'').toString().replace(/"/g,'""')+'"';}).join(',');}));
+  var blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='defects_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  toast('Exported '+data.length+' rows','success');
 }
+
+// ══════════════════════════════════════════════════
+// DEMO DATA
+// ══════════════════════════════════════════════════
+function loadDemoData(){
+  var products=[
+    {pc:'040100',sn:'Fire_040100',pn:'Fire',count:75},
+    {pc:'040300',sn:'House Owner_040300',pn:'House Owner',count:42},
+    {pc:'040700',sn:'SmartHome Cover- 040700',pn:'SmartHome Cover',count:125},
+    {pc:'040800',sn:'Commercial Fire_040800',pn:'Commercial Fire',count:50}
+  ];
+  var screens=['Landing - Search','Create Endt','Main-Summary','Coverage Screen','Risk Details','Payment Screen','Policy Header','Endorsement Summary','Documents','Preview Narration','Policy Detail','Extended Info','Clause Maintenance','Occupation Class','Vehicle Details'];
+  var statuses=['Open','Open','Open','Fixed','Not Fixed','Ready for Test','In Progress','Open'];
+  var types=['Functional','Enable/Disable','Backend/API','UI/UX & Labels'];
+  var testers=['Praveen Kumar','Praveen Jose','Praveen','Raisa'];
+  var assignees=['Athira Kurup','Anjali','Shanmukha','Arpita','Naveen',''];
+  var endtCodes=['63-Cancellation by insured','25-Change of risk address','12-Add vehicle','45-Coverage change','78-Premium revision','31-Policy renewal'];
+  var data=[];
+  products.forEach(function(sh){
+    for(var i=0;i<sh.count;i++){
+      var idx=data.length;
+      data.push({
+        defectID:'D'+(idx+1).toString().padStart(4,'0'),
+        productCode:sh.pc,productName:sh.pn,sourceSheet:sh.sn,product:sh.pn,
+        endtCode:endtCodes[i%endtCodes.length],
+        screenName:screens[i%screens.length],
+        description:'Defect on '+screens[i%screens.length]+': Field validation fails when '+(['submitting form','saving record','loading page','clicking button','changing dropdown'][i%5]),
+        comments:['BE dependency — API timeout','FE: Field not rendering on load','Validation missing for empty input','Works in UAT, fails in Prod','Intermittent — occurs 50% of the time'][i%5],
+        priority:['P1','P2','P3','P3','P4'][i%5],
+        status:statuses[i%8],
+        defectType:types[i%4],
+        tester:testers[i%4],
+        devAssignee:assignees[i%6],
+        opusRef:i%4===0?'OPUSM-'+Math.floor(29000+i*7):'',
+        legacyRef:i%6===0?'LEG-'+Math.floor(10000+i*3):'',
+        testData:i%3===0?'Policy: 1234567, Endt: '+endtCodes[i%endtCodes.length]:'',
+        notes:'',_added:false
+      });
+    }
+  });
+  loadData(data);nav('dashboard');toast('Demo: '+data.length+' defects across 4 products','success');
+}
+
+// ══════════════════════════════════════════════════
+// NAV & UI HELPERS
+// ══════════════════════════════════════════════════
+var PAGE_MAP={dashboard:0,products:1,insights:2,defects:3,add:4,assign:5,datasource:6,settings:7};
 
 function nav(pg){
   document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active');});
-  document.getElementById('pg-'+pg).classList.add('active');
+  var p=document.getElementById('pg-'+pg);if(p)p.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
-  var idx={dashboard:0,defects:1,insights:2,datasource:3};
-  var btns=document.querySelectorAll('.nav-btn');if(btns[idx[pg]])btns[idx[pg]].classList.add('active');
+  var btns=document.querySelectorAll('.nav-btn');
+  if(btns[PAGE_MAP[pg]])btns[PAGE_MAP[pg]].classList.add('active');
+  if(pg==='assign')renderAssignPage();
 }
-function toggleDark(){document.body.classList.toggle('dark');}
-function esc(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function toast(msg,ms){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},ms||3000);}
-function showShareModal(){document.getElementById('shareModal').classList.add('show');}
-function closeShareModal(){document.getElementById('shareModal').classList.remove('show');}
-function copyShareUrl(){navigator.clipboard.writeText(document.getElementById('shareUrl').value).then(function(){toast('URL copied!',2500);}).catch(function(){toast('URL: https://itskiranbabu3.github.io/Opus-Defect-Dashboard/',5000);});}
 
+function toggleDark(){
+  var isDark=document.body.classList.toggle('dark');
+  var btn=document.getElementById('darkModeBtn');if(btn)btn.textContent=isDark?'Disable Dark':'Enable Dark';
+  try{localStorage.setItem('dd-dark',isDark?'1':'0');}catch(e){}
+}
+
+function v(id){var el=document.getElementById(id);return el?el.value:'';}
+function esc(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function toast(msg,type){
+  var c=document.getElementById('toast');if(!c)return;
+  var t=document.createElement('div');
+  t.className='toast-item t-'+(type||'info');t.textContent=msg;
+  c.appendChild(t);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){t.classList.add('show');});});
+  setTimeout(function(){t.classList.remove('show');setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},300);},3800);
+}
+
+function openShareModal(){document.getElementById('shareModal').classList.add('show');}
+function copyShare(){
+  navigator.clipboard.writeText(document.getElementById('shareUrl').value)
+    .then(function(){toast('URL copied!','success');})
+    .catch(function(){toast('URL: http://44.68.16.95:8080/defect-dashboard/','warn');});
+}
+
+// Close modals on overlay click
+['editModal','detailModal','shareModal'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el)el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('show');});
+});
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
 (function init(){
-  var saved;try{saved=localStorage.getItem('defectDashURL');}catch(e){}
-  if(saved){document.getElementById('urlInput').value=saved;autoURL=saved;fetchFromURL(saved,true);}
-  else{nav('datasource');}
+  try{
+    if(localStorage.getItem('dd-dark')==='1'){document.body.classList.add('dark');var b=document.getElementById('darkModeBtn');if(b)b.textContent='Disable Dark';}
+    var iv=localStorage.getItem('dd-interval');if(iv){liveIntervalSec=+iv;var sel=document.getElementById('refreshInterval');if(sel)sel.value=iv;}
+  }catch(e){}
+  renderActivityFeed();
 })();
 </script>
